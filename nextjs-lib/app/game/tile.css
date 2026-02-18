@@ -1,0 +1,39 @@
+/* Tile.css */
+.tileWrapper {
+    display: inline-block;
+    margin: 0.2px;
+    perspective: 1000px; /* For 3D flip effects if needed later */
+}
+
+.tile {
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Typography */
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    
+    /* Border & Background */
+    /* border: 2px solid #6b7280; matches border-gray-500 */
+    background-color: #ffffff;
+    border-radius: 4px;
+    
+    /* Animation & Polish */
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+}
+.tile-O{ color: Blue;border: 2px solid Blue;}
+.tile-X{ color: Red;border: 2px solid Red;}
+.tile- {border: 2px solid #6b7280;}
+
+/* Hover effect */
+.tileWrapper:hover .tile {
+    background: #8e909458;
+    transform: scale(0.95);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
