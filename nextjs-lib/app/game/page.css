@@ -22,7 +22,8 @@
 }
 
 .player.active {
-    border-color: #3b82f6; /* Blue border for active player */
+    border-color: #3b82f6;
+    /* Blue border for active player */
     color: #1f2937;
     background-color: #eff6ff;
     transform: scale(1.1);
@@ -31,14 +32,17 @@
 /* The 3x3 Grid */
 .board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Creates 3 columns */
-    grid-template-rows: repeat(3, 1fr);    /* Creates 3 rows */
-    background-color: #9ca3af47; /* Gray lines between tiles */
+    grid-template-columns: repeat(3, 1fr);
+    /* Creates 3 columns */
+    grid-template-rows: repeat(3, 1fr);
+    /* Creates 3 rows */
+    background-color: #9ca3af47;
+    /* Gray lines between tiles */
     border-radius: 3px;
     box-shadow: 0 0px 4px 2px rgba(0, 0, 0, 0.7);
 }
 
 /* Ensure tiles are clickable */
-.board > div {
+.board>div {
     cursor: pointer;
 }

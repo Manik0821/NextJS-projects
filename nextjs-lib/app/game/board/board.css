@@ -54,11 +54,11 @@
 }
 
 /* Hover effect for the tile containers */
-.board > div {
+.board>div {
     cursor: pointer;
     transition: transform 0.1s ease;
 }
 
-.board > div:active {
+.board>div:active {
     transform: scale(0.95);
 }
