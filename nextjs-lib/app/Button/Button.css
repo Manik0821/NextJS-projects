@@ -1,0 +1,14 @@
+.btn-type-cont {
+
+    .btn-tertiary {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #4f46e5;
+        background-color: #eef2ff;
+        padding: 6px 16px;
+        border-radius: 999px; /* Pill style */
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: 1px solid #c7d2fe;
+      }
+}

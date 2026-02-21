@@ -1,0 +1,106 @@
+.header-container {
+    background: rgb(29, 59, 255);
+
+    .header {
+
+        display: flex;
+        width: -webkit-fill-available;
+        align-items: center;
+        padding: 0.5rem;
+        contain: content;
+        max-height: 3rem;
+
+        .header-menu {
+            height: 2rem;
+            width: 2rem;
+            position: absolute;
+            color: white;
+            cursor: pointer;
+
+            .menu-logo {
+                transform: translate(-50%) scale(1.5);
+                font-weight: 400;
+                font-size: 24px;
+                line-height: 0;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                height: 50%;
+            }
+
+        }
+
+        .header-content {
+
+            width: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .header-logo {
+                height: 5rem;
+                width: 5rem;
+                color: white;
+            }
+
+            .header-title {
+                font-size: 24px;
+                font-weight: 700;
+                text-align: center;
+                padding: 0 0.5rem;
+            }
+        }
+    }
+    .close-button:focus-visible {
+        outline: 2px solid #007AFF; /* Modern blue focus ring */
+        outline-offset: 2px;
+    }
+}
+
+.modal-navigation-content {
+
+    .navigation-list {
+        display: flex;
+        flex-direction: column;
+        /* Remove gaps to allow borders to define the rows */
+        gap: 0; 
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1rem; /* Larger tap target (at least 44px) */
+            background: white;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            
+            /* Subtle arrow icon using a pseudo-element (Common 2026 pattern) */
+            &::after {
+                content: '→';
+                margin-left: auto;
+                color: #ccc;
+                font-weight: 300;
+                transition: transform 0.2s ease;
+            }
+    
+            /* Active/Touch state for mobile feedback */
+            &:active {
+                background-color: #f9f9f9;
+            }
+    
+            &:hover::after {
+                transform: translateX(4px);
+                color: #000;
+            }
+    
+            /* Remove border from the last item */
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }    
+}

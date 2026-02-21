@@ -4,6 +4,7 @@ import { useGameStore } from '@/app/lib/store';
 import './board.css';
 import React, { use, useEffect } from 'react'
 import Tile from '../tile';
+import { Button } from '@/app/Button/Button';
 
 const Board = () => {
 
@@ -27,12 +28,27 @@ const Board = () => {
 
             <h2 className='boardHeading'>Board</h2>
             <div className="playerBoard">
-                <div className={`player ${currPlayer === 'X' ? 'active' : ''}`}>
-                    Player A (X) - {useGameStore((state) => state.ScoreA)}
+                <div style={{scale: "1.2" , margin:"0 15px"}}>
+                    <Button
+                        type="tertiary"
+                        // 2. Use clean template literal syntax
+                        value={`Player A (X) - ${useGameStore((state) => state.ScoreA)}`}
+                        click={false}
+                        disabled={false}
+                    />
                 </div>
-                <div className={`player ${currPlayer === 'O' ? 'active' : ''}`}>
+                <div style={{scale: "1.2" , margin:"0 15px"}}>
+                    <Button
+                        type="tertiary"
+                        // 2. Use clean template literal syntax
+                        value={`Player B (O) - ${useGameStore((state) => state.ScoreB)}`}
+                        click={false}
+                        disabled={false}
+                    />
+                </div>
+                {/* <div className={`player ${currPlayer === 'O' ? 'active' : ''}`}>
                     Player B (O) - {useGameStore((state) => state.ScoreB)}
-                </div>
+                </div> */}
             </div>
             <div className="board">
                 {board.map((value, index) => (
