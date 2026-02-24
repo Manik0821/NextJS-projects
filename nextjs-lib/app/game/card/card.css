@@ -1,0 +1,28 @@
+.card-container{
+    
+    width: -webkit-fill-available;
+    border-radius: 15px;
+    box-shadow: 1px 2px 5px #999;
+    contain: content;
+
+    .card{
+        min-height: 10rem;
+        /* width: 11rem; */
+        background-color: aliceblue;
+
+        .card-header{
+            font-size: 16px;
+            font-weight: 600;
+            padding: 5px 0;
+            border-bottom: 1px ridge grey;
+            background-color: rgb(29, 59, 255);
+            color: white;
+        }
+        .card-body {
+            color: blue;
+            padding: 1rem;
+            text-align: center;
+        }
+
+    }
+}
