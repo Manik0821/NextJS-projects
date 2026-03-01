@@ -26,7 +26,7 @@ const Board = () => {
     return (
         <div className='boardWrapper'>
 
-            <h2 className='boardHeading'>Board</h2>
+            {/* <h2 className='boardHeading'>Board</h2> */}
             <div className="playerBoard">
                 <div style={{scale: "1.2" , margin:"0 15px"}}>
                     <Button

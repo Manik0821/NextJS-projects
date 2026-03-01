@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
+import { SidebarSwitch } from '../lib/store';
 import './header.css';
 import logo from "./../../public/next.svg";
+import { stat } from 'node:fs';
 
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,6 +11,8 @@ export const Header = () => {
     // Modern 2026 practice: Use dedicated handlers for clarity
     const openMenu = () => setIsMenuOpen(true);
     const closeMenu = () => setIsMenuOpen(false);
+
+    const {isOpen , toggle} = SidebarSwitch();
 
     return (
         <div className="header-container">
@@ -18,7 +22,7 @@ export const Header = () => {
                     {/* Accessibility: Use aria-expanded and role="button" for screen readers */}
                     <div
                         className="menu-logo"
-                        onClick={openMenu}
+                        onClick={toggle}
                         role="button"
                         aria-label="Open menu"
                         aria-expanded={isMenuOpen}

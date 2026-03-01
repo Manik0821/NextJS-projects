@@ -99,3 +99,19 @@ export const useGameStore = create<GameState>((set, get) => ({
         currState: 'playing'
     })
 }));
+
+export const SidebarSwitch = create<{ isOpen: boolean; toggle: () => void }>((set) => ({
+    isOpen: false,
+    toggle: () => set((state) => ({ isOpen: !state.isOpen }))
+}));
+
+interface PageTitle {
+    title: string;
+    subTitle: string;
+    updateTitle: (title: string, subTitle: string) => void;
+}
+export const UpdateTitle = create<PageTitle>((set) => ({
+    title: 'Title',
+    subTitle: '',
+    updateTitle : (title: string, subTitle: string) => set({ title, subTitle })
+}));
