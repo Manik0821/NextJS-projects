@@ -1,23 +1,7 @@
 import { create } from 'zustand'
+import { PATTERNS, PAGE_DATA } from './storeData';
 
-// interface CounterState {
-//   count: number
-//   increment: () => void
-//   decrement: () => void
-// }
-
-// export const useCounterStore = create<CounterState>((set) => ({
-//   count: 0,
-//   increment: () => set((state) => ({ count: state.count + 1 })),
-//   decrement: () => set((state) => ({ count: state.count - 1 })),
-// }))
-// 1. Define the Winning Patterns
-const PATTERNS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Cols
-    [0, 4, 8], [2, 4, 6]             // Diagonals
-];
-
+// --- Game Logic Store ---
 interface GameState {
     currPlayer: 'X' | 'O';
     ScoreA: number;
@@ -25,7 +9,7 @@ interface GameState {
     TotalGames: number;
     board: string[];
     currState: 'playing' | 'finished';
-    updateBoard: (index: number, value: string) => void;
+    updateBoard: (index: number) => void;
     resetGame: () => void;
     resetBoard: () => void;
     checkWin: (currentBoard: string[]) => void;
@@ -39,30 +23,30 @@ export const useGameStore = create<GameState>((set, get) => ({
     board: Array(9).fill(''),
     currState: 'playing',
 
-    updateBoard: (index, value) => {
-        const { board, currState, currPlayer, ScoreA, ScoreB, TotalGames } = get();
+    updateBoard: (index) => {
+        const { board, currState, currPlayer } = get();
 
-        // Validations
         if (currState === 'finished' || board[index] !== '') return;
 
-        // Create a new board array (Immutable update)
         const newBoard = [...board];
-        newBoard[index] = value;
+        newBoard[index] = currPlayer;
 
         set({ board: newBoard });
 
         // Run Win Check
         get().checkWin(newBoard);
-        if (get().currState === 'finished') return; // If game ended, don't switch player
-        set({ currPlayer: currPlayer === 'X' ? 'O' : 'X' });
+
+        // Switch player only if game is still active
+        if (get().currState === 'playing') {
+            set({ currPlayer: currPlayer === 'X' ? 'O' : 'X' });
+        }
     },
 
-    // Internal helper logic
     checkWin: (currentBoard: string[]) => {
+        // Winning Logic
         for (const [a, b, c] of PATTERNS) {
             if (currentBoard[a] && currentBoard[a] === currentBoard[b] && currentBoard[a] === currentBoard[c]) {
                 const winner = currentBoard[a];
-
                 set((state) => ({
                     currState: 'finished',
                     TotalGames: state.TotalGames + 1,
@@ -73,16 +57,13 @@ export const useGameStore = create<GameState>((set, get) => ({
             }
         }
 
-        // Check for Draw
+        // Draw Logic
         if (!currentBoard.includes('')) {
             set((state) => ({
                 currState: 'finished',
                 TotalGames: state.TotalGames + 1,
-                // Update the player inside the same set call
-                currentPlayer: state.currPlayer === 'X' ? 'O' : 'O' // Switch to the other player for the next game
             }));
         }
-
     },
 
     resetBoard: () => set({
@@ -100,18 +81,31 @@ export const useGameStore = create<GameState>((set, get) => ({
     })
 }));
 
-export const SidebarSwitch = create<{ isOpen: boolean; toggle: () => void }>((set) => ({
+// --- Sidebar UI Store ---
+interface SidebarState {
+    isOpen: boolean;
+    toggle: () => void;
+}
+
+export const useSidebarStore = create<SidebarState>((set) => ({
     isOpen: false,
     toggle: () => set((state) => ({ isOpen: !state.isOpen }))
 }));
 
-interface PageTitle {
+// --- Page Title / Route Store ---
+interface PageTitleState {
     title: string;
     subTitle: string;
+    updateByPath: (path: string) => void;
     updateTitle: (title: string, subTitle: string) => void;
 }
-export const UpdateTitle = create<PageTitle>((set) => ({
+
+export const useTitleStore = create<PageTitleState>((set) => ({
     title: 'Title',
     subTitle: '',
-    updateTitle : (title: string, subTitle: string) => set({ title, subTitle })
+    updateByPath: (path: string) => {
+        const data = PAGE_DATA[path] || { title: 'Default Title', subTitle: '' };
+        set({ title: data.title, subTitle: data.subTitle });
+    },
+    updateTitle: (title, subTitle) => set({ title, subTitle }),
 }));

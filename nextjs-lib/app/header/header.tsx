@@ -1,18 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { SidebarSwitch } from '../lib/store';
+import { useSidebarStore } from '../lib/store';
 import './header.css';
-import logo from "./../../public/next.svg";
-import { stat } from 'node:fs';
+import { FullScreenModal } from './FullScreenModal/fullScreenModal';
 
 export const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    // Modern 2026 practice: Use dedicated handlers for clarity
-    const openMenu = () => setIsMenuOpen(true);
-    const closeMenu = () => setIsMenuOpen(false);
-
-    const {isOpen , toggle} = SidebarSwitch();
+    const { isOpen, toggle } = useSidebarStore();
 
     return (
         <div className="header-container">
@@ -25,7 +18,7 @@ export const Header = () => {
                         onClick={toggle}
                         role="button"
                         aria-label="Open menu"
-                        aria-expanded={isMenuOpen}
+                        aria-expanded={isOpen}
                     >
                         &#x2630;
                     </div>
@@ -34,6 +27,9 @@ export const Header = () => {
                     <img className="header-logo" src={"/next.svg"} alt="Next logo" />
                     {/* <div className="header-title">Library</div> */}
                 </div>
+                <FullScreenModal isOpen={isOpen} onClose={toggle} title="Menu">
+
+                </FullScreenModal>
             </div>
         </div>
     );

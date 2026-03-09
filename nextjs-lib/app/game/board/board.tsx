@@ -20,13 +20,8 @@ const Board = () => {
         }
     }, [currentState]);
 
-    // const count = useCounterStore((state) => state.count);
-    // const increment = useCounterStore((state) => state.increment);
-
     return (
         <div className='boardWrapper'>
-
-            {/* <h2 className='boardHeading'>Board</h2> */}
             <div className="playerBoard">
                 <div style={{scale: "1.2" , margin:"0 15px"}}>
                     <Button
@@ -46,13 +41,10 @@ const Board = () => {
                         disabled={false}
                     />
                 </div>
-                {/* <div className={`player ${currPlayer === 'O' ? 'active' : ''}`}>
-                    Player B (O) - {useGameStore((state) => state.ScoreB)}
-                </div> */}
             </div>
             <div className="board">
                 {board.map((value, index) => (
-                    <div key={index} onClick={() => useGameStore.getState().updateBoard(index, currPlayer)}>
+                    <div key={index} onClick={() => useGameStore.getState().updateBoard(index)}>
                         <Tile value={value} />
                     </div>
                 ))}
