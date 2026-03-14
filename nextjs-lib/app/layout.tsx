@@ -5,18 +5,10 @@ import { Header } from './header/header';
 import { TitleDisplay } from './TitleDisplay/TitleDisplay';
 import './globals.css';
 import './layout.css';
-import { useTitleStore } from './lib/store';
-import { useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const updateTitle = useTitleStore((state) => state.updateTitle);
-
-  useEffect(() => {
-    // Force the title to reset whenever the Home component mounts
-    updateTitle("Home Dashboard", "Welcome back!");
-  }, [updateTitle]);
   return (
     <html lang="en">
       <body className={inter.className}> 

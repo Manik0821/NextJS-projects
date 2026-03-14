@@ -5,8 +5,8 @@ export const PATTERNS = [
     [0, 4, 8], [2, 4, 6]             // Diagonals
 ];
 
-export const PAGE_DATA: Record<string, { title: string; subTitle: string }> = {
-    '/': { title: 'Home Dashboard', subTitle: 'Welcome back!' },
+export const PAGE_DATA: Record<string, { title: string; subTitle: string; subHeading?:string }> = {
+    '/': { title: 'Home Dashboard', subTitle: '', subHeading : 'Welcome Back!' },
     '/game': { title: 'Board Game', subTitle: 'Play against the computer' },
     '/game/card': { title: 'Card Component', subTitle: 'This is a Card Component' },
   };

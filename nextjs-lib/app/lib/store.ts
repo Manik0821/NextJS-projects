@@ -96,6 +96,7 @@ export const useSidebarStore = create<SidebarState>((set) => ({
 interface PageTitleState {
     title: string;
     subTitle: string;
+    subHeading: string;
     updateByPath: (path: string) => void;
     updateTitle: (title: string, subTitle: string) => void;
 }
@@ -103,9 +104,10 @@ interface PageTitleState {
 export const useTitleStore = create<PageTitleState>((set) => ({
     title: 'Title',
     subTitle: '',
+    subHeading: '',   
     updateByPath: (path: string) => {
-        const data = PAGE_DATA[path] || { title: 'Default Title', subTitle: '' };
-        set({ title: data.title, subTitle: data.subTitle });
+        const data = PAGE_DATA[path] || { title: 'Default Title', subTitle: '',subHeading: '' };
+        set({ title: data.title, subTitle: data.subTitle, subHeading: data.subHeading});
     },
     updateTitle: (title, subTitle) => set({ title, subTitle }),
 }));
