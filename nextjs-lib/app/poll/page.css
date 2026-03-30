@@ -1,0 +1,106 @@
+.poll-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.poll-container {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Vertical Bar Layout */
+.poll-results {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end; /* Aligns columns to bottom */
+    height: 300px; /* Fixed height for verticality */
+    margin-bottom: 40px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.poll-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    flex: 1;
+}
+
+.poll-track {
+    width: 45px;
+    height: 100%; /* Relative to .poll-results */
+    background: #f7f7f7;
+    border-radius: 8px 8px 0 0;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Ensures bar grows UP */
+    overflow: hidden;
+}
+
+.poll-bar {
+    width: 100%;
+    transition: height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.vote-count {
+    font-size: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+.poll-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+}
+
+.poll-percentage {
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+}
+
+/* Controls */
+.poll-controls {
+    text-align: center;
+}
+
+.total-text {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #999;
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.vote-button {
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.vote-button:hover {
+    background: #f9f9f9;
+    transform: translateY(-2px);
+}

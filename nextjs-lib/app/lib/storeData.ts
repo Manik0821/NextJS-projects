@@ -9,4 +9,5 @@ export const PAGE_DATA: Record<string, { title: string; subTitle: string; subHea
     '/': { title: 'Home Dashboard', subTitle: '', subHeading : 'Welcome Back!' },
     '/game': { title: 'Board Game', subTitle: 'Play against the computer' },
     '/game/card': { title: 'Card Component', subTitle: 'This is a Card Component' },
+    '/poll': { title: 'Poll Component', subTitle: 'Vote for your favorite option' },
   };

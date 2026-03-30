@@ -65,6 +65,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
                         <nav className="tab-buttons">
                             <Link href="/" className="nav-tab-item" onClick={onClose}>🏠 Home</Link>
                             <Link href="/game" className="nav-tab-item" onClick={onClose}>🎮 Play Game</Link>
+                            <Link href="/poll" className="nav-tab-item" onClick={onClose}>📊 Polls</Link>
                         </nav>
                         <div className="tab-details">
                             {children || <p>Welcome! Select an option above to navigate.</p>}
