@@ -5,7 +5,7 @@ type CardProps = {
     children?: React.ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({title="",children}) => {
+export const Card: React.FC<CardProps> = ({title="Card Title",children=<h2>This is a Card</h2>}) => {
 
     return (
         <div className="card-container">

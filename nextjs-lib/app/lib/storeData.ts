@@ -10,4 +10,6 @@ export const PAGE_DATA: Record<string, { title: string; subTitle: string; subHea
     '/game': { title: 'Board Game', subTitle: 'Play against the computer' },
     '/game/card': { title: 'Card Component', subTitle: 'This is a Card Component' },
     '/poll': { title: 'Poll Component', subTitle: 'Vote for your favorite option' },
+    '/carousel': { title: 'Carousel Component', subTitle: 'Explore our carousel examples' },
+    '/carousel/sliding-carousel': { title: 'Sliding Carousel', subTitle: 'A carousel that slides smoothly' },
   };

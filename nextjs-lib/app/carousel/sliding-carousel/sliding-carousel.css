@@ -1,0 +1,46 @@
+/* 1. Outer Wrapper (The "Box" around everything) */
+.carousel-wrapper {
+    margin: 2rem auto;         /* Centers the carousel and adds vertical space */
+    max-width: 1200px;         /* Keeps it from getting too wide on desktop */
+    border: 2px solid #e0e0e0; /* Clean, subtle border */
+    border-radius: 12px;       /* Matches modern UI trends */
+    overflow: hidden;          /* Ensures header/container stay inside the rounded corners */
+    background: #fdfdfd;       /* Optional: subtle background diff from page */
+  }
+  
+  /* 2. Header Section */
+  .carousel-header {
+    font-size: 1.375rem;       /* Scalable 22px */
+    font-weight: 600;
+    background-color: rgb(29, 59, 255);
+    color: white;
+    padding: 0.5rem 1.5rem;      /* More breathing room */
+    margin: 0;                 /* Reset default margins */
+    text-align: center;
+    display: flex;           /* Shrinks header to content width */
+
+    .carousel-title {
+        width: calc(100% - 2rem); /* Leaves space for "See All" */
+    }
+
+  }
+  
+  /* 3. Scrolling Container */
+  .carousel-container {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    /* padding: 2rem;             Prevents card shadows from being clipped */
+    
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-container::-webkit-scrollbar {
+    display: none;
+  }
+  

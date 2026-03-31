@@ -1,0 +1,11 @@
+.accordion-cont-expanded {
+    max-height: 1000px;
+    transition: max-height 0.5s ease-in-out , padding 0.5s ease-in-out;
+    padding: 2rem; 
+}
+
+.accordion-cont-collapsed {
+    max-height: 0;
+    transition: max-height 0.5s ease-in-out , padding 0.5s ease-in-out;
+    padding: 0 2rem;
+}
