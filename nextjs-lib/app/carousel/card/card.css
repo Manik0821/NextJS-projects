@@ -1,5 +1,5 @@
 .card-container{
-    width: 15rem;
+    width: --webkit-fill-available;
     min-width: 10rem;
     border-radius: 15px;
     box-shadow: 1px 2px 5px #999;
