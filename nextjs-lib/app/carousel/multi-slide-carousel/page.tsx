@@ -3,12 +3,10 @@ import Carousel from './multi-slide-carousel';
 
 const MultiSlideCarousel = ({children}:{children: React.ReactNode}) => {
   return (
-    <div className='carousel-wrapper' style={{width: 'maxContent', margin: '0 auto'}}>
-      <Carousel>
-        {children}
-      </Carousel>
+    <div className='carousel-wrapper multi-slide-carousel' style={{width: 'maxContent', margin: '0 auto'}}>
+      <Carousel children={children}></Carousel>
     </div>
   )
 }
 
-export default MultiSlideCarousel
+export default MultiSlideCarousel;

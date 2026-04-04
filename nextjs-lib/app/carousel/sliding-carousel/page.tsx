@@ -1,10 +1,10 @@
 import React from 'react'
 import Carousel from './sliding-carousel';
 
-const SlidingCarousel = () => {
+const SlidingCarousel = ({children}:{children: React.ReactNode}) => {
   return (
-    <div className='carousel-wrapper' style={{width: 'maxContent', margin: '0 auto'}}>
-      <Carousel />
+    <div className='carousel-wrapper sliding-carousel' style={{width: 'maxContent', margin: '0 auto'}}>
+      <Carousel children={children} ></Carousel>
     </div>
   )
 }

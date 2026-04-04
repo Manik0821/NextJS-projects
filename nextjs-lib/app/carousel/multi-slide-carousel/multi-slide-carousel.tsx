@@ -5,95 +5,75 @@ import Arrow from '../card/arrow/arrow';
 import { Card } from '../card/card';
 import '../carousel.css';
 
-
-const Carousel = ({children}:{children:React.ReactNode}) => {
-    const carouselRef = useRef<HTMLDivElement>(null);
-    const parentRef = useRef<HTMLDivElement>(null);
+const Carousel = ({ children }: { children: React.ReactNode }) => {
+    const carouselRef = useRef<HTMLDivElement>(null); // The Scrolling Track
+    const parentRef = useRef<HTMLDivElement>(null);   // The Accordion Wrapper
     const [dir, changeDir] = useState('up');
 
     const accClick = () => {
-        if (carouselRef.current) {
-            carouselRef.current.classList.toggle('accordion-cont-expanded');
-            carouselRef.current.classList.toggle('accordion-cont-collapsed');
+        if (parentRef.current) {
+            // Toggle on the PARENT so buttons also hide
+            parentRef.current.classList.toggle('accordion-cont-expanded');
+            parentRef.current.classList.toggle('accordion-cont-collapsed');
             changeDir(prev => (prev === 'up' ? 'down' : 'up'));
         }
     };
 
-    // 1. ADD SCROLL FUNCTION
     const scroll = (direction: 'left' | 'right') => {
-        if (carouselRef.current) {
-            // 1. Get the visible width of the container
-            const containerWidth = carouselRef.current.offsetWidth;
+        if (carouselRef.current && parentRef.current) {
+            // Use the parent (the visible window) to decide how far to move
+            const viewWidth = parentRef.current.offsetWidth;
             
-            // 2. Convert 2rem to pixels (assuming 1rem = 16px, so 32px)
-            const marginOffset = 32; 
-    
-            // 3. Calculate how much to move (e.g., 80% of the view for a nice slide)
-            const scrollAmount = containerWidth - marginOffset;
-    
-            // 4. Scroll based on direction
-            carouselRef.current.scrollBy({ 
-                left: direction === 'right' ? scrollAmount : -scrollAmount, 
-                behavior: 'smooth' 
+            // Move by 75% of the view so the user doesn't lose track of where they were
+            const scrollAmount = viewWidth ;
+
+            carouselRef.current.scrollBy({
+                left: direction === 'right' ? scrollAmount : -scrollAmount,
+                behavior: 'smooth'
             });
         }
     };
-    
 
     return (
-        <div className="carousel-wrapper">
-            <div className="carousel" ref={parentRef} > {/* CSS makes this 'position: relative' */}
-
+        <div className="carousel-wrapper multi-slide-carousel">
+            <div className="carousel"> 
+                {/* Header */}
                 <div className="carousel-header" onClick={accClick}>
-                    <div className="carousel-title">Sliding Carousel</div>
+                    <div className="carousel-title">Multi Sliding Carousel</div>
                     <Arrow direction={dir} />
                 </div>
 
-                <div
-                    className="control-buttons"
-                    style={{
-                        display: 'flex', // Keep flex so positioning works
-                        opacity: dir === 'up' ? 1 : 0,
-                        visibility: dir === 'up' ? 'visible' : 'hidden',
-                        transition: 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out',
+                {/* The Container (Accordion targets this) */}
+                <div className="carousel-container accordion-cont-expanded" ref={parentRef}>
+                    
+                    <div className="carousel-control-button">
+                        <button className='control-button' onClick={() => scroll('left')}>
+                            {'<'}
+                        </button>
+                    </div>
 
-                        // Your existing positioning
-                        position: 'absolute',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        left: '0',
-                        top: '50%',
-                        pointerEvents: 'none',
-                        zIndex: 10
-                    }}
-                >
-                    {/* 3. ADD ONCLICK TO BUTTONS */}
-                    <button
-                        style={{ pointerEvents: 'auto' }}
-                        onClick={() => scroll('left')}
-                    >
-                        {'<'}
-                    </button>
-                    <button
-                        style={{ pointerEvents: 'auto' }}
-                        onClick={() => scroll('right')}
-                    >
-                        {'>'}
-                    </button>
-                </div>
-
-                <div className="carousel-container">
-                    <div className="carousel-cont-track  accordion-cont-expanded" ref={carouselRef}>
+                    {/* The Track (Scroll occurs here) */}
+                    <div className="carousel-cont-track" ref={carouselRef}>
                         {children || (
-                            <Card title='Card 1'>This is Card 1</Card>
+                            <>
+                                <Card title='Card 1'>This is Card 1</Card>
+                                <Card title='Card 2'>This is Card 2</Card>
+                                <Card title='Card 3'>This is Card 3</Card>
+                                <Card title='Card 4'>This is Card 4</Card>
+                                <Card title='Card 5'>This is Card 5</Card>
+                            </>
                         )}
                     </div>
-                </div>
 
+                    <div className="carousel-control-button">
+                        <button className='control-button' onClick={() => scroll('right')}>
+                            {'>'}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
-
 
 export default Carousel;

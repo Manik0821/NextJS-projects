@@ -10,6 +10,7 @@ const Arrow: React.FC<ArrowProps> = ({ direction }) => {
     fontSize: '1.5rem',
     transition: 'transform 0.5s ease-in-out',
     width: '2rem',
+    textAlign: 'center',
   };
 
   const rotation = direction === 'up' ? 'rotate(-90deg)' : 'rotate(90deg)';
