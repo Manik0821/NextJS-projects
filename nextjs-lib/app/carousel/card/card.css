@@ -7,18 +7,18 @@
     scrollbar-gutter: 0;
 
     .card{
-        min-height: 10rem;
-        /* width: 11rem; */
+        height: 100%;
         background-color: aliceblue;
 
         .card-header{
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 5px 0;
+            padding: 5% 0;
             border-bottom: 1px ridge grey;
             background-color: rgb(29, 59, 255);
             color: white;
             text-align: center;
+            min-height: 10%;
         }
         .card-body {
             color: blue;

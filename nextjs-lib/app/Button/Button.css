@@ -10,5 +10,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         border: 1px solid #c7d2fe;
+        text-align: center;
       }
 }

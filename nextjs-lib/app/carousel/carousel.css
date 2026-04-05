@@ -1,7 +1,7 @@
 /* 1. Animation States */
 .accordion-cont-expanded {
     max-height: 1000px;
-    padding: 2rem 0.5rem;
+    padding: 1rem 0.5rem;
     transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
@@ -19,22 +19,24 @@
     border-radius: 12px;
     overflow: hidden;
     background: #fdfdfd;
+    box-shadow:0 0 10px -2px #666;
 
     .carousel {
         position: relative;
         width: 100%;
-        border: 2px solid #e0e0e0;
         border-radius: 12px;
 
         .carousel-header {
             display: flex;
             align-items: center;
             padding: 0.75rem 1.5rem;
-            background-color: rgb(29, 59, 255);
+            background-color: #1d3bff;
             color: white;
             font-size: 1.375rem;
             font-weight: 600;
             cursor: pointer;
+            position: relative;
+            z-index: 10;
 
             .carousel-title {
                 flex: 1;
@@ -62,7 +64,8 @@
 
                 .control-button {
                     width: 2.5rem;
-                    height: 2.5rem;
+                    aspect-ratio: 1 / 1;
+                    max-width: 95%;
                     border-radius: 50%;
                     border: 2px solid #1d3bff;
                     background-color: white;
@@ -91,18 +94,10 @@
                 scroll-snap-type: x mandatory;
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE/Edge */
-                -webkit-overflow-scrolling: touch;
+                padding: 1rem 0;
 
                 &::-webkit-scrollbar {
                     display: none; /* Chrome/Safari */
-                }
-
-                /* Individual Items */
-                & > * {
-                    /* Math: (100% / 4) - (3 gaps of 1.5rem distributed over 4 items) */
-                    flex: 0 0 calc(25% - 1.25rem); 
-                    scroll-snap-align: start;
-                    box-sizing: border-box;
                 }
             }
         }

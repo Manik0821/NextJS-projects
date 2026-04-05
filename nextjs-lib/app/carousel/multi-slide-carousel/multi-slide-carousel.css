@@ -2,6 +2,28 @@
     .carousel-container {
         .carousel-cont-track {
             gap: 1.5rem;
+
+            /* Individual Items */
+            & > * {
+                /* Math: (100% / 4) - (3 gaps of 1.5rem distributed over 4 items) */
+                @media screen and (min-width: 1024px) {
+                    flex: 0 0 calc(25% - 1.25rem);    
+                }
+                @media screen and (min-width: 768px) and (max-width: 1023px) {
+                    flex: 0 0 calc(33% - 1rem); 
+                }
+                @media screen and (max-width: 767px) and (min-width: 480px) {
+                    flex: 0 0 calc(50% - 0.5rem); 
+                }
+                @media screen and (max-width: 479px) {
+                    flex: 0 0 100%;
+                }
+
+
+
+                scroll-snap-align: start;
+                box-sizing: border-box;
+            }
         }
         
     }

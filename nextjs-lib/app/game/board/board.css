@@ -39,6 +39,7 @@
     color: #1e40af;
     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
     transform: translateY(-4px);
+    cursor: pointer;
 }
 
 .board {

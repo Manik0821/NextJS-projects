@@ -32,8 +32,8 @@ const Carousel = ({ children }: { children: React.ReactNode }) => {
                     <div className="carousel-title" >Sliding Carousel </div>
                     <Arrow direction={dir} />
                 </div>
-                <div className="carousel-container">
-                    <div className="carousel-cont-track  accordion-cont-expanded" ref={carouselRef}>
+                <div className="carousel-container  accordion-cont-expanded" ref={carouselRef}>
+                    <div className="carousel-cont-track">
 
                         {children || (
                             <Card title='Card 1'>This is Card 1</Card>

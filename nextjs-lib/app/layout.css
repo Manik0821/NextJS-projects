@@ -1,5 +1,7 @@
 /* 2026 Native CSS Nesting - Professional Plain Style */
-
+html, body {
+  overscroll-behavior-x: none;
+}
 .page-layout {
     background-color: #ffffff;
 

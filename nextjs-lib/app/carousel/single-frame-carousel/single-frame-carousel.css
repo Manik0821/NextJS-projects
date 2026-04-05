@@ -1,0 +1,37 @@
+.single-frame-carousel {
+    .carousel-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+        .carousel-cont-track {
+            gap: 0;
+            margin: 0;
+            padding: 0 !important;
+            
+            
+            overscroll-behavior-x: none; 
+            /* Prevent the page from bouncing/scrolling horizontally */
+            overflow-x: hidden !important;
+            /* Disable touch-based navigation gestures */
+            touch-action: pan-y; 
+        }
+        .carousel-cont-track>* {
+            flex: 0 0 100%;
+            gap: 1px;
+        }
+
+        .carousel-control-button{
+            position: absolute;
+            width: 100%;
+            padding: 0.5rem;
+            transform: translateY(-25%);
+            
+            .button-left{
+                margin-right: auto;
+            }
+            .button-right{
+                margin-left: auto;
+            }
+        }
+    }
+}

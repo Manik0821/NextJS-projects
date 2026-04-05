@@ -133,9 +133,9 @@
     margin-top: auto;
     padding: 14px;
     background: transparent;
-    border: 1px solid #eee;
+    border: 1px solid #000;
     border-radius: 10px;
-    color: #888;
+    color: #000;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
@@ -143,9 +143,16 @@
 }
 
 .secondary-close-btn:hover {
-    background: #fff1f0;
-    color: #f5222d;
-    border-color: #ffa39e;
+    background: #f0feff;
+    color: #007bff;
+    border-color: #007bff;
+}
+.tab-details {
+    color: #111;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0.5rem 1rem;
 }
 
 /* Mobile adjustments */
