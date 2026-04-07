@@ -44,7 +44,7 @@ const Carousel = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
                 {/* The Container (Accordion targets this) */}
-                <div className="carousel-container accordion-cont-expanded" ref={parentRef}>
+                <div className="carousel-container accordion-cont-collapsed" ref={parentRef}>
                     
                     <div className="carousel-control-button">
                         <button className='control-button' onClick={() => scroll('left')}>

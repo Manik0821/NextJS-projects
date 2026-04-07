@@ -79,7 +79,7 @@ const Carousel = ({ children, autoSlide = true, interval = 3000 }: CarouselProps
                     <Arrow direction={dir} />
                 </div>
 
-                <div className="carousel-container accordion-cont-expanded" ref={parentRef}>
+                <div className="carousel-container accordion-cont-collapsed" ref={parentRef}>
                     <div className="carousel-control-button">
                         <button className='control-button button-left' onClick={() => scroll('left')}>
                             {'<'}
