@@ -4,7 +4,7 @@ import { useGameStore } from '@/app/lib/store';
 import './board.css';
 import React, { use, useEffect } from 'react'
 import Tile from '../tile';
-import { Button } from '@/app/Button/Button';
+import { Button } from '@/app/lib/Button/Button';
 
 const Board = () => {
 

@@ -67,12 +67,13 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
                             <Link href="/game" className="nav-tab-item" onClick={onClose}>🎮 Play Game</Link>
                             <Link href="/poll" className="nav-tab-item" onClick={onClose}>📊 Polls</Link>
                             <Link href="/carousel" className="nav-tab-item" onClick={onClose}>🎠 Carousel</Link>
+                            <Link href="/ai-transcript" className="nav-tab-item" onClick={onClose}>AI Chatbot</Link>
                         </nav>
                         <div className="tab-details">
                             {children || <p>Welcome! Select an option above to navigate.</p>}
                         </div>
                         <button className="secondary-close-btn" onClick={onClose}>
-                            Back to Dashboard
+                            Back to Page
                         </button>
                     </div>
                 </main>

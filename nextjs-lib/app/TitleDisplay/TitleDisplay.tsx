@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTitleStore } from '../lib/store';
-import { Button } from '../Button/Button';
+import { Button } from '../lib/Button/Button';
 
 export const TitleDisplay = () => {
     const pathname = usePathname();
