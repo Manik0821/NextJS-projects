@@ -103,3 +103,26 @@
         }
     }
 }
+
+/* 3. Mobile Optimization Viewport Layer */
+@media (max-width: 768px) {
+    .carousel-wrapper {
+        margin: 1rem 8px; /* Reduced outside padding/margin spacing */
+
+        .carousel {
+            .carousel-header {
+                padding: 0.6rem 1rem; /* Compact outside header padding */
+                font-size: 1.1rem; /* Reduced font size for mobile view */
+            }
+
+            .carousel-container {
+                .carousel-control-button {
+                    .control-button {
+                        font-size: 16px; /* Reduced button symbol font size */
+                        width: 2rem; /* Slighly tightened mobile button footprints */
+                    }
+                }
+            }
+        }
+    }
+}

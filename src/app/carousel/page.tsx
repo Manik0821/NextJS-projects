@@ -9,7 +9,7 @@ import SingleFrameCarousel from '@/features/carousel/single-frame-carousel/singl
 
 const CarouselPage = () => {
     return (
-        <div className='carousel-page p-8'>
+        <div className='carousel-page'>
             {/* Your carousel components remain exactly the same below... */}
 
 

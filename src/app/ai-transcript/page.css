@@ -1,34 +1,63 @@
-/* 1. Main Container - Updated for Resizability */
+/* 1. Main Container - Absolute Viewport Boundary Protection */
 .ai-transcript-wrapper {
-    max-width: 90vw; /* Allows it to expand on large screens */
-    width: 800px;     /* Starting width */
-    height: 600px;    /* Starting height */
-    min-width: 400px; /* Prevents UI collapse */
-    min-height: 400px;
+    /* Calculates exact space left on desktop, assuming an application header exists */
+    height: calc(100vh - 120px); 
+    min-height: 450px;
+    width: 100%;
+    max-width: 1100px;
     
-    margin: 2rem auto;
+    margin: 1.5rem auto;
     background: #ffffff;
     border-radius: 16px;
-    border: 1px solid rgba(29, 59, 255, 0.2); 
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(29, 59, 255, 0.05);
+    border: 1px solid rgba(29, 59, 255, 0.15); 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05), 0 5px 15px rgba(29, 59, 255, 0.02);
     display: flex;
     flex-direction: column;
-    
-    /* RESIZABLE LOGIC */
-    resize: both; 
-    overflow: hidden; /* Required for resize handle to show */
+    overflow: hidden; /* Important: prevents child layers from extending wrapper bounds */
     position: relative; 
     font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
 
-    /* 2. Chat Section - Fixed height removed to allow dynamic scaling */
+    /* 2. Top Header Bar */
+    .chat-header {
+        padding: 1rem 1.5rem;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(29, 59, 255, 0.1);
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            h2 {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .status-indicator {
+                width: 8px;
+                height: 8px;
+                background-color: #10b981; 
+                border-radius: 50%;
+                display: inline-block;
+                box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            }
+        }
+    }
+
+    /* 3. Chat Area Wrapper */
     .chat-block {
-        flex: 1; /* Takes up all remaining vertical space */
-        min-height: 0; /* Critical fix for flexbox scrolling */
-        background: #f0f2f8; 
+        flex: 1; 
+        min-height: 0; /* Structural requirement for internal nested scrolling */
+        background: #f8fafc; 
         display: flex;
         flex-direction: column;
         position: relative;
-        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
 
         .chat-window {
             flex: 1;
@@ -38,25 +67,27 @@
             flex-direction: column;
             gap: 16px;
 
-            /* Custom Scrollbar */
             &::-webkit-scrollbar { width: 6px; }
             &::-webkit-scrollbar-thumb { 
-                background: rgba(29, 59, 255, 0.3); 
+                background: rgba(29, 59, 255, 0.2); 
                 border-radius: 10px; 
             }
 
-            /* 3. Message Components */
+            /* 4. Message Rows & Bubbles - Word Safety constraints */
             .message-row {
                 display: flex;
                 width: 100%;
-                animation: slideIn 0.3s ease-out forwards;
+                box-sizing: border-box;
+                animation: slideIn 0.25s ease-out forwards;
 
                 .message-bubble {
                     max-width: 75%;
-                    padding: 12px 18px;
+                    padding: 12px 16px;
                     font-size: 0.95rem;
                     line-height: 1.5;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                    word-break: break-word; 
+                    overflow-wrap: break-word; 
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
                 }
 
                 &.user {
@@ -64,7 +95,7 @@
                     .message-bubble {
                         background: rgb(29, 59, 255);
                         color: #ffffff;
-                        border-radius: 18px 18px 2px 18px;
+                        border-radius: 16px 16px 2px 16px;
                     }
                 }
 
@@ -72,135 +103,110 @@
                     justify-content: flex-start;
                     .message-bubble {
                         background: #ffffff; 
-                        color: #1a1c23;
-                        border-radius: 18px 18px 18px 2px;
-                        border: 1px solid rgba(29, 59, 255, 0.1);
+                        color: #0f172a;
+                        border-radius: 16px 16px 16px 2px;
+                        border: 1px solid #e2e8f0;
+                    }
+                    
+                    &.processing .thinking-bubble {
+                        background: #f1f5f9;
+                        color: #64748b;
+                        border-style: dashed;
+                        animation: pulse 1.5s infinite ease-in-out;
                     }
                 }
             }
         }
     }
 
-    /* 4. Fancy Input Section - Kept at bottom */
+    /* 5. Input Bar Controls */
     .input-block {
-        display: flex;
-        gap: 15px;
-        padding: 1.5rem;
+        padding: 1.25rem 1.5rem;
         background: #ffffff;
-        border-top: 1px solid rgba(29, 59, 255, 0.1);
-        align-items: center;
-        flex-shrink: 0; /* Prevents input area from squishing */
+        border-top: 1px solid #e2e8f0;
+        flex-shrink: 0;
 
         input {
-            flex: 1;
-            padding: 14px 22px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
             outline: none;
             font-size: 0.95rem;
             background: #f8fafc;
-            color: #1e293b;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            color: #0f172a;
+            transition: all 0.2s ease;
 
             &:focus {
                 background: #ffffff;
                 border-color: rgb(29, 59, 255);
-                box-shadow: 0 0 0 4px rgba(29, 59, 255, 0.1), 0 10px 15px -3px rgba(29, 59, 255, 0.1);
-                transform: translateY(-2px);
+                box-shadow: 0 0 0 3px rgba(29, 59, 255, 0.1);
             }
 
             &::placeholder {
                 color: #94a3b8;
-                font-style: italic;
             }
-        }
 
-        .send-trigger {
-            background: rgb(29, 59, 255);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &:hover {
-                background: rgb(15, 45, 225);
-                box-shadow: 0 4px 12px rgba(29, 59, 255, 0.3);
-                transform: scale(1.05);
+            &:disabled {
+                background: #f1f5f9;
+                cursor: not-allowed;
+                color: #94a3b8;
             }
         }
     }
 }
 
-/* Resize Handle Styling */
-.ai-transcript-wrapper::-webkit-resizer {
-    background-color: rgba(29, 59, 255, 0.1);
-    border-radius: 10px;
-}
-
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Base Desktop Styles remain as previously defined --- */
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
 
-/* 5. Mobile Responsive View */
+/* 6. Mobile Optimization Viewport Layer - Fixed Header Restoration */
 @media (max-width: 768px) {
     .ai-transcript-wrapper {
-        /* Full-screen mobile layout */
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw !important;
-        height: 100dvh !important; /* Fills screen perfectly on iOS/Android */
+        /* Removed position: fixed and full screen overrides */
+        position: relative; 
+        
+        /* Instead of filling viewport absolutely, it occupies remaining screen below your real header */
+        height: calc(100vh - 80px) !important; 
+        min-height: auto;
+        
+        width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
         border-radius: 0;
         border: none;
-        resize: none; /* Disable manual resizing on mobile */
-        z-index: 999; /* Ensure it sits above layout containers */
+        z-index: 1; 
 
-        .chat-block {
-            flex: 1;
-            box-shadow: none; /* Clean look for mobile */
-            background: #f4f6fb; /* Slightly warmer for readability */
+        .chat-header {
+            padding: 1rem;
+        }
 
-            .chat-window {
-                padding: 1rem;
-                gap: 12px;
+        .chat-block .chat-window {
+            padding: 1rem;
+            gap: 12px;
 
-                .message-bubble {
-                    max-width: 85%; /* More width for text on narrow screens */
-                    padding: 10px 14px;
-                    font-size: 0.95rem; /* Easy to read */
-                }
+            .message-row .message-bubble {
+                max-width: 85%; 
+                padding: 10px 14px;
             }
         }
 
         .input-block {
-            padding: 12px;
+            padding: 10px 12px;
             background: #ffffff;
-            /* Stack inputs if they are too cramped or keep them side-by-side */
-            flex-direction: column; 
-            gap: 8px;
-            border-top: 1px solid #e2e8f0;
 
             input {
-                width: 100%;
-                font-size: 16px; /* Crucial: Prevents iOS auto-zoom on focus */
-                padding: 12px 15px;
-                border-radius: 12px;
-                background: #f8fafc;
-                
-                &:focus {
-                    transform: none; /* Remove desktop lift effect for stability */
-                }
+                font-size: 16px; 
+                padding: 12px 16px;
+                border-radius: 10px;
             }
         }
     }
 }
-

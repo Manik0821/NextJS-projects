@@ -1,106 +1,176 @@
+/* 1. Main Wrapper Layout Setup */
 .poll-wrapper {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+
+    /* 2. Poll Inner Card Box */
+    .poll-container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+
+        /* 3. Graphical Vertical Chart Component */
+        .poll-results {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end; 
+            height: 240px; 
+            margin-bottom: 40px;
+            padding-bottom: 15px; 
+            border-bottom: 2px solid #f0f0f0;
+
+            /* Individual Chart Column Tracks */
+            .poll-column {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                height: 100%;
+                flex: 1;
+                min-width: 0; 
+                padding: 0 4px; 
+
+                .poll-track {
+                    width: 45px;
+                    height: 100%; 
+                    background: #f7f7f7;
+                    border-radius: 8px 8px 0 0;
+                    margin: 10px 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end; 
+                    overflow: hidden;
+                    flex-shrink: 0; 
+
+                    .poll-bar {
+                        width: 100%;
+                        transition: height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: relative;
+
+                        .vote-count {
+                            font-size: 10px;
+                            color: white;
+                            font-weight: bold;
+                        }
+                    }
+                }
+
+                .poll-label {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #444;
+                    text-align: center;
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap; 
+                }
+
+                .poll-percentage {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #888;
+                    margin-top: 2px;
+                }
+            }
+        }
+
+        /* 4. Voting Action Controls Layout */
+        .poll-controls {
+            text-align: center;
+
+            .total-text {
+                margin-bottom: 15px;
+                font-size: 14px;
+                color: #999;
+            }
+
+            .button-group {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+
+                .vote-button {
+                    padding: 12px;
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    transition: all 0.2s;
+
+                    &:hover {
+                        background: #f9f9f9;
+                        transform: translateY(-2px);
+                    }
+                }
+            }
+        }
+    }
 }
 
-.poll-container {
-    width: 100%;
-    max-width: 600px;
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
+/* 5. Mobile Adjustments Screen Layer */
+@media (max-width: 768px) {
+    .poll-wrapper {
+        padding: 15px 10px; 
 
-/* Vertical Bar Layout */
-.poll-results {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end; /* Aligns columns to bottom */
-    height: 300px; /* Fixed height for verticality */
-    margin-bottom: 40px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f0f0f0;
-}
+        .poll-container {
+            padding: 20px 12px;
 
-.poll-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    height: 100%;
-    flex: 1;
-}
+            .poll-results {
+                height: 170px; 
+                margin-bottom: 15px; /* REDUCED: Pulled up the massive whitespace below the graph lines */
+                padding-bottom: 10px;
+                align-items: flex-end;
 
-.poll-track {
-    width: 45px;
-    height: 100%; /* Relative to .poll-results */
-    background: #f7f7f7;
-    border-radius: 8px 8px 0 0;
-    margin: 10px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Ensures bar grows UP */
-    overflow: hidden;
-}
+                .poll-column {
+                    justify-content: flex-end; 
+                    
+                    .poll-track {
+                        width: 32px; 
+                        margin: 4px 0;
+                    }
 
-.poll-bar {
-    width: 100%;
-    transition: height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+                    .poll-label {
+                        font-size: 11px; 
+                        white-space: normal; 
+                        text-overflow: clip;
+                        overflow: visible;
+                        line-height: 1.2;
+                        max-height: 2.4em; 
+                        display: -webkit-box;
+                        -webkit-line-clamp: 2; 
+                        -webkit-box-orient: vertical;
+                    }
 
-.vote-count {
-    font-size: 10px;
-    color: white;
-    font-weight: bold;
-}
+                    .poll-percentage {
+                        font-size: 11px;
+                    }
+                }
+            }
 
-.poll-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #444;
-}
+            .poll-controls {
+                .total-text {
+                    margin-top: 0;
+                    margin-bottom: 10px; /* REDUCED: Tightened whitespace directly before the button group begins */
+                    font-size: 13px;
+                }
 
-.poll-percentage {
-    font-size: 12px;
-    font-weight: 700;
-    color: #888;
-}
-
-/* Controls */
-.poll-controls {
-    text-align: center;
-}
-
-.total-text {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #999;
-}
-
-.button-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-.vote-button {
-    padding: 12px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.vote-button:hover {
-    background: #f9f9f9;
-    transform: translateY(-2px);
+                .button-group {
+                    grid-template-columns: 1fr; 
+                    gap: 6px;
+                }
+            }
+        }
+    }
 }

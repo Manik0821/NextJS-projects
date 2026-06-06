@@ -7,43 +7,21 @@ type ChatMessage = {
     message: string;
     id: number;
 };
+
 const initialChat: ChatMessage[] = [
     { 
         id: 1, 
         sender: 'ai', 
         message: "Hello! I'm your AI assistant. How can I help you with your transcript today?" 
-    },
-    { 
-        id: 2, 
-        sender: 'user', 
-        message: "Can you summarize the main points of our last meeting?" 
-    },
-    { 
-        id: 3, 
-        sender: 'ai', 
-        message: "Certainly! Based on the transcript, we discussed the Q3 marketing strategy, the new brand guidelines, and the upcoming product launch in October." 
-    },
-    { 
-        id: 4, 
-        sender: 'user', 
-        message: "Great, thanks! What were the specific action items?" 
-    },
-    { 
-        id: 5, 
-        sender: 'ai', 
-        message: "The key action items were: 1. Sarah to finalize the ad copy. 2. Mike to coordinate with the design team. 3. Final review scheduled for next Friday." 
     }
 ];
 
 const AiTranscript = () => {
-    // Pass the initialChat to your useState
     const [chat, setChat] = useState<ChatMessage[]>(initialChat);
+    const [inputVal, setInputVal] = useState('');
+    const [loading, setLoading] = useState(false);
     const chatWindowRef = useRef<HTMLDivElement>(null);
-    
-    // ... rest of your logic
 
-
-    // Auto-scroll whenever chat updates
     useEffect(() => {
         if (chatWindowRef.current) {
             chatWindowRef.current.scrollTo({
@@ -51,23 +29,70 @@ const AiTranscript = () => {
                 behavior: 'smooth',
             });
         }
-    }, [chat]);
+    }, [chat, loading]); // Added loading as a dependency to scroll when "thinking" appears
 
-    const handleSendMessage = (e: KeyboardEvent<HTMLInputElement>, sender: 'user' | 'ai') => {
-        const input = e.currentTarget;
-        if (e.key === 'Enter' && input.value.trim() !== '') {
-            const newMessage: ChatMessage = {
-                sender,
-                message: input.value,
-                id: Date.now(), // Unique ID based on timestamp
+    const handleSendMessage = async (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== 'Enter' || inputVal.trim() === '' || loading) return;
+
+        const userText = inputVal.trim();
+        setInputVal(''); 
+
+        const userMessage: ChatMessage = {
+            sender: 'user',
+            message: userText,
+            id: Date.now(),
+        };
+        
+        const updatedChatWithUser = [...chat, userMessage];
+        setChat(updatedChatWithUser);
+        setLoading(true);
+
+        try {
+            const res = await fetch('/api/ai-transcript', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    history: updatedChatWithUser.map(msg => ({
+                        role: msg.sender === 'user' ? 'user' : 'assistant',
+                        content: msg.message
+                    }))
+                }),
+            });
+
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            const aiMessage: ChatMessage = {
+                sender: 'ai',
+                message: data.response,
+                id: Date.now() + 1,
             };
-            setChat((prev) => [...prev, newMessage]);
-            input.value = ''; // Clear input
+            setChat((prev) => [...prev, aiMessage]);
+
+        } catch (err: any) {
+            setChat((prev) => [
+                ...prev,
+                {
+                    sender: 'ai',
+                    message: `⚠️ Error generation: ${err.message}. Check terminal logs or API connection.`,
+                    id: Date.now() + 2
+                }
+            ]);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className='ai-transcript-wrapper'>
+            {/* Added Chat Header */}
+            <div className="chat-header">
+                <div className="header-info">
+                    <span className="status-indicator"></span>
+                    <h2>Chat Assistant</h2>
+                </div>
+            </div>
+
             <div className="chat-block">
                 <div className="chat-window" ref={chatWindowRef}>
                     {chat.map((msg) => (
@@ -77,19 +102,24 @@ const AiTranscript = () => {
                             </div>
                         </div>
                     ))}
+                    {loading && (
+                        <div className="message-row ai processing">
+                            <div className="message-bubble thinking-bubble">
+                                Llama thinking...
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             
             <div className="input-block">
                 <input 
                     type="text" 
-                    placeholder="AI Response..." 
-                    onKeyDown={(e) => handleSendMessage(e, 'ai')} 
-                />
-                <input 
-                    type="text" 
-                    placeholder="User Message..." 
-                    onKeyDown={(e) => handleSendMessage(e, 'user')} 
+                    placeholder={loading ? "Waiting for AI..." : "Ask a question about your transcripts..."}
+                    value={inputVal}
+                    onChange={(e) => setInputVal(e.target.value)}
+                    onKeyDown={handleSendMessage} 
+                    disabled={loading}
                 />
             </div>
         </div>

@@ -135,11 +135,12 @@ export default function Home() {
   const [selectedFruit, setSelectedFruit] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   return (
-    <main className='bg-yellow'><h1 className='p-4'>Hello</h1>
+    <main className='bg-yellow'>
+      {/* <h1 className='p-4'>Hello</h1> */}
 
       <div style={{display:'flex'}}>
 
-      <Dropdown
+      {/* <Dropdown
           options={options}
           value={selectedFruit}
           onChange={setSelectedFruit}
@@ -148,7 +149,7 @@ export default function Home() {
           options={cities}
           value={selectedCity}
           onChange={setSelectedCity}
-        />
+        /> */}
       </div>
     </main>
   )
