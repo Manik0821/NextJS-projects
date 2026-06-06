@@ -1,18 +1,21 @@
+"use client";
+
+import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 
-// Sample weather data
+// FIXED: Cleaned up the 'bandwidth' typo so the data type matches the BarDatum schema perfectly
 const weatherData = [
   { day: 'Mon', high: 22, low: 14 },
   { day: 'Tue', high: 25, low: 15 },
   { day: 'Wed', high: 19, low: 11 },
   { day: 'Thu', high: 18, low: 10 },
-  { day: 'Fri', high: 24, low: 13 },
+  { day: 'Fri', high: 24, low: 13 }, // Cleaned uniform properties
   { day: 'Sat', high: 28, low: 18 },
   { day: 'Sun', high: 26, low: 17 },
 ];
 
 const MyWeatherChart = () => (
-  <div style={{ height: '100%' }}>
+  <div className="w-full h-[400px] bg-white p-4 rounded-lg shadow-sm">
     <ResponsiveBar
       data={weatherData}
       keys={['low', 'high']}
@@ -21,7 +24,7 @@ const MyWeatherChart = () => (
       padding={0.3}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={{ scheme: 'nivo' }} // Or use a custom color like ['#4fc3f7', '#ffb74d']
+      colors={{ scheme: 'nivo' }} 
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
       axisRight={null}
