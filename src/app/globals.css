@@ -8,53 +8,70 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --primary-color: rgb(29, 59, 255);
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   margin: 0;
- 
 }
+
 /* 2026 Native CSS Nesting - Professional Plain Style */
 html, body {
   overscroll-behavior-x: none;
 }
-.page-layout {
-    background-color: #ffffff;
 
-    min-height: 90vh;
-    padding: 1rem;
-    font-family: system-ui, -apple-system, sans-serif;
-  
-    /* 1. Header Section Hierarchy */
-    .page-title {
-      width: 100%;
-      min-height: 140px;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      /* gap: 12px; */
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      
+.page-layout {
+  background-color: #ffffff;
+  min-height: 90vh;
+  padding: 1.5rem; /* Slightly cleaner desktop padding */
+  font-family: system-ui, -apple-system, sans-serif;
+
+  /* 📱 Mobile Responsive for Base Layout */
+  @media (max-width: 640px) {
+    padding: 0.75rem; /* Tighten edge spacing on mobile to maximize content screen real estate */
+  }
+
+  /* 1. Header Section Hierarchy */
+  .page-title {
+    width: 100%;
+    min-height: 140px;
+    margin-bottom: 2rem;
+    padding: 1rem; /* Universal fallback padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
     box-shadow: inset 0px 0px 10px #00000030;
-  
-      .page-heading {
-        font-size: 2rem;
-        font-weight: 800;
-        color: rgb(29, 59, 255);
-        margin: 0;
-        letter-spacing: -0.02em;
+    transition: all 0.2s ease-in-out;
+
+    /* 📱 Mobile Responsive for Header Card */
+    @media (max-width: 640px) {
+      min-height: 90px; /* Reduce visual height footprint on mobile */
+      margin-bottom: 1.25rem; /* Bring the actual feature component closer to top */
+      border-radius: 12px; /* Subtler corner curve on smaller screens */
+    }
+
+    .page-heading {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 0;
+      letter-spacing: -0.02em;
+      text-align: center; /* Avoid clipping text layout constraints */
+
+      /* 📱 Mobile Responsive for Main Heading Text */
+      @media (max-width: 640px) {
+        font-size: 1.35rem; /* Scale font down smoothly to avoid long-title overflows */
       }
     }
-  
-    /* 2. Content Section Hierarchy (Children Node Container) */
-    .page-content {
-    
-    }
   }
-  
+
+  /* 2. Content Section Hierarchy (Children Node Container) */
+  .page-content {
+    /* Ready for feature component injection */
+  }
+}

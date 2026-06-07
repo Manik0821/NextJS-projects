@@ -1,15 +1,22 @@
 .btn-type-cont {
+  .btn-tertiary {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #4f46e5;
+      background-color: #eef2ff;
+      padding: 6px 16px;
+      border-radius: 999px; /* Pill style */
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid #c7d2fe;
+      text-align: center;
+      transition: all 0.2s ease; /* Smooth scaling transition */
 
-    .btn-tertiary {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #4f46e5;
-        background-color: #eef2ff;
-        padding: 6px 16px;
-        border-radius: 999px; /* Pill style */
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border: 1px solid #c7d2fe;
-        text-align: center;
+      /* 📱 Responsive Override for Mobile Screens */
+      @media (max-width: 640px) {
+          font-size: 0.75rem;       /* Scaled down font size */
+          padding: 4px 12px;        /* Tighter padding to fit smaller widths */
+          letter-spacing: 0.03em;   /* Proportional tracking adjustment */
       }
+  }
 }

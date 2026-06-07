@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}> 
         <Header />
         
-        <div className="page-layout max-w-6xl mx-auto p-6">
+        <div className="page-layout max-w-8xl mx-auto p-6">
           {/* Safely mounts as a client shell inside a server timeline */}
           <TitleDisplay /> 
           
