@@ -18,7 +18,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
 
     useEffect(() => {
         setMounted(true); // Mark as mounted once we reach the client
-        
+
         if (!isOpen) return;
 
         const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -51,7 +51,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
             tabIndex={-1}
         >
             <div className="modal-overlay" onClick={onClose} />
-            
+
             <div className="modal-window">
                 <header className="modal-header">
                     <h2 id="modal-title" className="modal-title">{title}</h2>
@@ -62,12 +62,29 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
 
                 <main className="modal-content">
                     <div className="modal-navigation-tabs">
-                        <nav className="tab-buttons">
-                            <Link href="/" className="nav-tab-item" onClick={onClose}>🏠 Home</Link>
-                            <Link href="/game" className="nav-tab-item" onClick={onClose}>🎮 Play Game</Link>
-                            <Link href="/poll" className="nav-tab-item" onClick={onClose}>📊 Polls</Link>
-                            <Link href="/carousel" className="nav-tab-item" onClick={onClose}>🎠 Carousel</Link>
-                            <Link href="/ai-transcript" className="nav-tab-item" onClick={onClose}>AI Chatbot</Link>
+                        <nav className="tab-buttons"><Link href="/" className="nav-tab-item" onClick={onClose}>
+                            🏠 Home
+                        </Link>
+
+                            <Link href="/game" className="nav-tab-item" onClick={onClose}>
+                                🎮 Play Game
+                            </Link>
+
+                            <Link href="/poll" className="nav-tab-item" onClick={onClose}>
+                                📊 Polls
+                            </Link>
+
+                            <Link href="/carousel" className="nav-tab-item" onClick={onClose}>
+                                🎠 Carousel
+                            </Link>
+
+                            <Link href="/ai-transcript" className="nav-tab-item" onClick={onClose}>
+                                🤖 AI Chatbot
+                            </Link>
+
+                            <Link href="/weather" className="nav-tab-item" onClick={onClose}>
+                                🌤️ Weather App
+                            </Link>
                         </nav>
                         <div className="tab-details">
                             {children || <p>Welcome! Select an option above to navigate.</p>}

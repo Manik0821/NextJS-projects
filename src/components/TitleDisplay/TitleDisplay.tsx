@@ -10,7 +10,7 @@ export const TitleDisplay = () => {
     const { title, subTitle, subHeading, updateByPath } = useTitleStore();
 
     // Fixed the typo: changed 'ai-transscript' to 'ai-transcript'
-    const isHidden = pathname.toLowerCase().includes('ai-transcript');
+    const isHidden = pathname.toLowerCase().includes('ai-transcript') || pathname.toLowerCase().includes('weather');
 
     useEffect(() => {
         if (isHidden) return;
