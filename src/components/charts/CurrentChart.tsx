@@ -151,15 +151,15 @@ export default function CurrentChart({
 
         <ResponsiveContainer
           width="100%"
-          height="80%"
+          height="90%"
         >
           <ComposedChart
             data={data}
             margin={{
-              top: 10,
+              top: 20,
               right: 10,
               left: 0,
-              bottom: 10,
+              bottom: -10,
             }}
           >
             <CartesianGrid

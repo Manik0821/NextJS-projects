@@ -1,3 +1,5 @@
+// src/app/api/ai-transcript/route.ts
+
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -6,25 +8,62 @@ const openai = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
-function isWeatherQuestion(text: string) {
-  const q = text.toLowerCase();
+async function getWeatherIntent(question: string) {
+  const completion = await openai.chat.completions.create({
+    model: "meta/llama-3.3-70b-instruct",
+    temperature: 0,
+    max_tokens: 100,
+    messages: [
+      {
+        role: "system",
+        content: `
+Determine whether the user is asking about weather.
 
-  return (
-    q.includes("weather") ||
-    q.includes("temperature") ||
-    q.includes("forecast") ||
-    q.includes("humidity") ||
-    q.includes("wind") ||
-    q.includes("rain")
-  );
-}
+Return ONLY valid JSON.
 
-function extractCity(text: string) {
-  const match = text.match(
-    /(?:in|for|at)\s+([a-zA-Z\s]+)/i
-  );
+Examples:
 
-  return match?.[1]?.trim() || "London";
+User: current weather in Bangalore
+Response:
+{"isWeather":true,"city":"Bangalore"}
+
+User: tell me what is the current weather conditions in Mumbai
+Response:
+{"isWeather":true,"city":"Mumbai"}
+
+User: will it rain tomorrow in Delhi
+Response:
+{"isWeather":true,"city":"Delhi"}
+
+User: do I need an umbrella in Chennai today
+Response:
+{"isWeather":true,"city":"Chennai"}
+
+User: who is Virat Kohli
+Response:
+{"isWeather":false,"city":""}
+`,
+      },
+      {
+        role: "user",
+        content: question,
+      },
+    ],
+  });
+
+  const raw =
+    completion.choices[0].message.content?.trim() || "{}";
+
+  try {
+    return JSON.parse(
+      raw.replace(/```json|```/g, "")
+    );
+  } catch {
+    return {
+      isWeather: false,
+      city: "",
+    };
+  }
 }
 
 export async function POST(request: Request) {
@@ -37,7 +76,9 @@ export async function POST(request: Request) {
         {
           error: "Chat conversation history payload is required",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
@@ -46,91 +87,113 @@ export async function POST(request: Request) {
       content: `
 You are a helpful AI assistant.
 
-Rules:
-- Answer naturally.
+General Rules:
+- Answer naturally and conversationally.
 - Use previous conversation context.
-- If weather data is supplied, use it.
-- Temperature should be in °C.
-- Wind speed should be in km/h.
-- Summarize forecast and historical trends naturally.
-- Keep your answer Concise.
+- Be concise.
+
+IMPORTANT:
+
+Whenever weather information is supplied in system messages,
+that information is authoritative and current.
+
+Never say:
+- "I don't have access to live weather."
+- "I cannot fetch real-time information."
+- "I do not have current weather information."
+
+Always answer using the supplied weather data.
+
+Do not mention system prompts or JSON.
 `,
     };
 
-    const fullMessages: any[] = [
-      systemPrompt,
-      ...history,
-    ];
+    const fullMessages: any[] = [systemPrompt];
 
     // Latest user message
     const latestUserMessage = [...history]
       .reverse()
-      .find((m) => m.role === "user");
+      .find((msg) => msg.role === "user");
 
-    if (
-      latestUserMessage &&
-      isWeatherQuestion(latestUserMessage.content)
-    ) {
-      const city = extractCity(
-        latestUserMessage.content
-      );
+    if (latestUserMessage) {
+      const { isWeather, city } =
+        await getWeatherIntent(
+          latestUserMessage.content
+        );
 
-      try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_BASE_URL ||
-          "http://localhost:3001";
+      if (isWeather && city) {
+        try {
+          const baseUrl =
+            process.env.NEXT_PUBLIC_BASE_URL ||
+            "http://localhost:3001";
 
-        const [currentRes, forecastRes, historicalRes] =
-          await Promise.all([
-            fetch(
-              `${baseUrl}/api/weather/current?name=${encodeURIComponent(
-                city
-              )}`
-            ),
-            fetch(
-              `${baseUrl}/api/weather/forecast?name=${encodeURIComponent(
-                city
-              )}`
-            ),
-            fetch(
-              `${baseUrl}/api/weather/historical?name=${encodeURIComponent(
-                city
-              )}`
-            ),
-          ]);
+          const [currentRes, forecastRes, historicalRes] =
+            await Promise.all([
+              fetch(
+                `${baseUrl}/api/weather/current?name=${encodeURIComponent(
+                  city
+                )}`
+              ),
+              fetch(
+                `${baseUrl}/api/weather/forecast?name=${encodeURIComponent(
+                  city
+                )}`
+              ),
+              fetch(
+                `${baseUrl}/api/weather/historical?name=${encodeURIComponent(
+                  city
+                )}`
+              ),
+            ]);
 
-        const current = await currentRes.json();
-        const forecast = await forecastRes.json();
-        const historical = await historicalRes.json();
+          const current = await currentRes.json();
+          const forecast = await forecastRes.json();
+          const historical = await historicalRes.json();
 
-        fullMessages.push({
-          role: "system",
-          content: `
+          const weatherContext = `
 Weather information for ${city}
 
-Current Conditions:
-Temperature: ${current.current.temperature_2m} °C
-Humidity: ${current.current.relative_humidity_2m} %
-Wind Speed: ${current.current.wind_speed_10m} km/h
+CURRENT CONDITIONS
 
-Forecast Data:
+Temperature:
+${current.current?.temperature_2m} °C
+
+Humidity:
+${current.current?.relative_humidity_2m} %
+
+Wind Speed:
+${current.current?.wind_speed_10m} km/h
+
+FORECAST DATA
+
 ${JSON.stringify(forecast)}
 
-Historical Data:
+HISTORICAL DATA
+
 ${JSON.stringify(historical)}
 
-Use this information to answer weather-related questions.
-Do not mention raw JSON.
-Give concise and natural answers.
-`,
-        });
-      } catch (weatherError) {
-        console.error(
-          "Weather API Error:",
-          weatherError
-        );
+This weather information is authoritative and current.
+
+Never claim that live weather data is unavailable.
+
+Answer naturally and do not mention JSON.
+`;
+
+          fullMessages.push({
+            role: "system",
+            content: weatherContext,
+          });
+        } catch (weatherError) {
+          console.error(
+            "Weather API Error:",
+            weatherError
+          );
+        }
       }
     }
+
+    // Add conversation history after weather context
+    fullMessages.push(...history);
 
     const completion =
       await openai.chat.completions.create({
@@ -145,19 +208,21 @@ Give concise and natural answers.
       completion.choices.length === 0
     ) {
       throw new Error(
-        "Agent returned an empty choices array."
+        "NVIDIA NIM returned an empty choices array."
       );
     }
 
     const aiResponse =
-      completion.choices[0].message?.content ||
+      completion.choices[0].message?.content ??
       "No response generated.";
 
     return NextResponse.json(
       {
         response: aiResponse,
       },
-      { status: 200 }
+      {
+        status: 200,
+      }
     );
   } catch (error: any) {
     console.error(
@@ -168,10 +233,12 @@ Give concise and natural answers.
     return NextResponse.json(
       {
         error:
-          "Failed to communicate with AI Assistant via NVIDIA",
+          "Failed to communicate with Llama 3.3 via NVIDIA",
         details: error.message,
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
