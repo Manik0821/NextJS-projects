@@ -49,7 +49,7 @@ ${args.join(", ")}
 Please keep the response within approximately ${wordLimit} words.
 `;
 
-        const response = await fetch("/api/ai-generate", {
+        const response = await fetch("/api/ai/ai-generate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -116,7 +116,7 @@ Please keep the response within approximately ${wordLimit} words.
             </h2>
             <p className="text-xs text-slate-400 font-medium flex items-center gap-1 mt-0.5">
               <Sparkles className="h-3 w-3 text-indigo-500 animate-pulse" />
-              AI-generated climate summary
+              AI-generated summary
             </p>
           </div>
         </div>
@@ -150,7 +150,7 @@ Please keep the response within approximately ${wordLimit} words.
           </div>
         ) : (
           /* Main Text Typography Wrapper */
-          <p className="ai-summary-content text-sm leading-7 text-slate-600/95 font-medium md:text-base md:leading-8 transition-opacity duration-300">
+          <p className="ai-summary-content text-sm text-slate-600/95 font-medium md:text-base md:leading-8 transition-opacity duration-300">
             {summary}
           </p>
         )}

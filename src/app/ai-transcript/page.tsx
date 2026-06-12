@@ -48,7 +48,7 @@ const AiTranscript = () => {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/ai-transcript', {
+            const res = await fetch('/api/ai/ai-transcript', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

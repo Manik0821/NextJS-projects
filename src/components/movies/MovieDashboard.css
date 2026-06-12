@@ -1,0 +1,376 @@
+/* ==========================================================================
+   Base Layout Core Canvas
+   ========================================================================== */
+   .movie-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.25rem;
+    background-color: #ffffff;
+    color: #0f172a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  
+    /* Global Section Entry Animation */
+    section, header, article {
+      animation: var(--dashboard-entry, slideUpFade 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both);
+    }
+  }
+  
+  /* ==========================================================================
+     Typography & Typography Header Block
+     ========================================================================== */
+  .movie-header {
+    /* --dashboard-entry: slideUpFade 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) both; */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+  
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      /* line-height: 1.1; */
+      background: linear-gradient(135deg, #1d3bff 0%, #0015b3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  
+    p {
+      color: #64748b;
+      margin-top: 0.625rem;
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+  }
+  
+  /* ==========================================================================
+     Search Interface Engine (Modern Mobile-First Stack)
+     ========================================================================== */
+  .movie-search {
+    --dashboard-entry: slideUpFade 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) 0.05s both;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin-bottom: 3rem;
+    width: 100%;
+  
+    .movie-input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.1rem 1.25rem;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+  
+      &::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+      }
+  
+      &:focus {
+        outline: none;
+        background-color: #ffffff;
+        border-color: #1d3bff;
+        box-shadow: 0 0 0 4px rgba(29, 59, 255, 0.1);
+      }
+    }
+  
+    .movie-search-button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 1.1rem 2rem;
+      cursor: pointer;
+      background: #1d3bff;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 12px rgba(29, 59, 255, 0.15);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  
+      &:hover {
+        background: #001ecb;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(29, 59, 255, 0.25);
+      }
+  
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+  
+  /* ==========================================================================
+     AI Summary Component Integration View
+     ========================================================================== */
+  .movie-ai-section {
+    --dashboard-entry: scaleReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    margin-bottom: 3.5rem;
+    
+    /* Apply unified clean presentation inside custom container mounts */
+    > div {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+      border: 1.5px solid rgba(29, 59, 255, 0.15) !important;
+      box-shadow: 0 20px 40px -15px rgba(29, 59, 255, 0.08) !important;
+      border-radius: 24px !important;
+      padding: 1.75rem !important;
+    }
+  }
+  
+  /* ==========================================================================
+     Dynamic Visual Component Elements
+     ========================================================================== */
+  .movie-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 4rem 0;
+    color: #475569;
+    font-weight: 500;
+  
+    .movie-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3.5px solid #f1f5f9;
+      border-top-color: #1d3bff;
+      border-radius: 50%;
+      animation: spinLoop 0.7s linear infinite;
+    }
+  }
+  
+  .movie-hero {
+    text-align: center;
+    padding: 4.5rem 1.5rem;
+    background: #f8fafc;
+    border-radius: 24px;
+    margin-bottom: 3rem;
+    border: 2px dashed #e2e8f0;
+    color: #64748b;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  
+  /* Detailed Information Modal Sheet */
+  .movie-detail {
+    --dashboard-entry: slideUpFade 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 28px;
+    margin-bottom: 4rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.04);
+  
+    .movie-detail-poster {
+      width: 100%;
+      max-width: 220px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+    }
+  
+    .movie-detail-content {
+      flex: 1;
+      width: 100%;
+  
+      h2 {
+        font-size: 1.85rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.25rem;
+        line-height: 1.2;
+      }
+  
+      .movie-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+  
+        .movie-tag {
+          background: #f1f5f9;
+          padding: 0.4rem 0.8rem;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #475569;
+        }
+      }
+  
+      .movie-plot {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #334155;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 1.25rem;
+      }
+    }
+  }
+  
+  /* ==========================================================================
+     Responsive Multi-Column Media Grid
+     ========================================================================== */
+  .movie-grid {
+    --dashboard-entry: slideUpFade 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s both;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
+  
+    .movie-card {
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  
+      &:hover {
+        transform: translateY(-6px);
+        border-color: #1d3bff;
+        box-shadow: 0 20px 30px -10px rgba(29, 59, 255, 0.1);
+  
+        .movie-card-image {
+          transform: scale(1.04);
+        }
+      }
+  
+      &.is-active {
+        border-color: #1d3bff;
+        box-shadow: 0 0 0 3px rgba(29, 59, 255, 0.15);
+      }
+  
+      .movie-card-image-wrap {
+        width: 100%;
+        aspect-ratio: 2/3;
+        overflow: hidden;
+        background: #f8fafc;
+      }
+  
+      .movie-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+  
+      .movie-card-content {
+        padding: 1rem;
+  
+        h3 {
+          font-size: 0.95rem;
+          font-weight: 700;
+          margin-bottom: 0.375rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+  
+        .movie-card-meta {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.8rem;
+          color: #64748b;
+          font-weight: 500;
+  
+          .movie-card-type {
+            background: #eff6ff;
+            color: #1d3bff;
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            text-transform: capitalize;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+  
+  /* ==========================================================================
+     Animation Timings & Keyframe Declarations
+     ========================================================================== */
+  @keyframes spinLoop {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleReveal {
+    from { opacity: 0; transform: scale(0.97) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  /* ==========================================================================
+     Tablet & Desktop Responsive Layout Fluid Shifts (768px and up)
+     ========================================================================== */
+  @media (min-width: 768px) {
+    .movie-dashboard {
+      padding: 3rem 2rem;
+  
+      .movie-search {
+        flex-direction: row;
+        background: #f8fafc;
+        padding: 0.5rem;
+        border-radius: 20px;
+        border: 1.5px solid #e2e8f0;
+        max-width: 700px;
+        margin: 0 auto 3.5rem auto;
+        gap: 0;
+  
+        .movie-input {
+          background-color: transparent;
+          border: none;
+          padding: 1rem 1.5rem;
+          
+          &:focus {
+            box-shadow: none;
+          }
+        }
+  
+        .movie-search-button {
+          width: auto;
+          padding: 1rem 2.25rem;
+          border-radius: 14px;
+        }
+  
+        &:focus-within {
+          background: #ffffff;
+          border-color: #1d3bff;
+          box-shadow: 0 12px 30px -10px rgba(29, 59, 255, 0.15);
+        }
+      }
+  
+      .movie-detail {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 3rem;
+        gap: 3rem;
+  
+        .movie-detail-poster {
+          max-width: 260px;
+        }
+  
+        .movie-detail-content h2 {
+          font-size: 2.25rem;
+        }
+      }
+  
+      .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 1.75rem;
+      }
+    }
+  }
+  

@@ -13,4 +13,5 @@ export const PAGE_DATA: Record<string, { title: string; subTitle: string; subHea
     '/carousel': { title: 'Carousel Component', subTitle: 'Explore our carousel examples' },
     '/carousel/sliding-carousel': { title: 'Sliding Carousel', subTitle: 'A carousel that slides smoothly' },
     '/ai-transcript': { title: 'AI Transcript', subTitle: 'Chat with AI agent' },
+    '/movie': { title: 'CINE EXPLORER', subTitle: 'Search movies, series and episodes' },
   };

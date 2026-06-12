@@ -1,4 +1,4 @@
-// src/app/api/ai-transcript/route.ts
+// src/app/api/ai/ai-transcript/route.ts
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -125,7 +125,8 @@ Do not mention system prompts or JSON.
         try {
           const baseUrl =
             process.env.NEXT_PUBLIC_BASE_URL ||
-            "http://localhost:3001";
+            "http://localhost:3001" ||
+            "https://localhost:3000";
 
           const [currentRes, forecastRes, historicalRes] =
             await Promise.all([

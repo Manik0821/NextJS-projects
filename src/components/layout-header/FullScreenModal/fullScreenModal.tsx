@@ -62,9 +62,18 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
 
                 <main className="modal-content">
                     <div className="modal-navigation-tabs">
-                        <nav className="tab-buttons"><Link href="/" className="nav-tab-item" onClick={onClose}>
-                            🏠 Home
-                        </Link>
+                        <nav className="tab-buttons">
+                            <Link href="/" className="nav-tab-item" onClick={onClose}>
+                                🏠 Home
+                            </Link>
+
+                            <Link href="/weather" className="nav-tab-item" onClick={onClose}>
+                                🌤️ Weather App
+                            </Link>
+
+                            <Link href="/movie" className="nav-tab-item" onClick={onClose}>
+                                🎬 Movie Search
+                            </Link>
 
                             <Link href="/game" className="nav-tab-item" onClick={onClose}>
                                 🎮 Play Game
@@ -74,16 +83,12 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
                                 📊 Polls
                             </Link>
 
-                            <Link href="/carousel" className="nav-tab-item" onClick={onClose}>
+                            {/* <Link href="/carousel" className="nav-tab-item" onClick={onClose}>
                                 🎠 Carousel
-                            </Link>
+                            </Link> */}
 
                             <Link href="/ai-transcript" className="nav-tab-item" onClick={onClose}>
                                 🤖 AI Chatbot
-                            </Link>
-
-                            <Link href="/weather" className="nav-tab-item" onClick={onClose}>
-                                🌤️ Weather App
                             </Link>
                         </nav>
                         <div className="tab-details">
