@@ -10,7 +10,7 @@ interface CastMember {
 
 interface MovieDetailsProps {
   data: {
-    id: number | string; // Loosened type slightly to support payload blending safely
+    id: number | string; 
     title: string;
     tagline?: string;
     overview: string;
@@ -25,25 +25,24 @@ interface MovieDetailsProps {
 }
 
 export default function MovieDetailsCard({ data }: MovieDetailsProps) {
+  // Base configuration strings for direct TMDB asset delivery
   const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500/"; 
   const TMDB_BACKDROP_BASE = "https://tmdb.org";
 
-  // FIXED: Changed to valid direct image file links to prevent parsing crashes
-  const fallbackPoster = "https://unsplash.com";
-  const fallbackAvatar = "https://unsplash.com";
+  // FIXED: Converted raw website addresses into highly reliable visual layout image placeholders
+  const fallbackPoster = "https://placehold.co";
+  const fallbackAvatar = "https://placehold.co";
 
   const backdropUrl = data.backdrop_path ? `${TMDB_BACKDROP_BASE}${data.backdrop_path}` : '';
 
-  // FIXED: Safe adaptive parsing matching both TMDB (YYYY-MM-DD) and OMDB (DD MMM YYYY) strings
+  // Adaptive tracking mapping matches both TMDB (YYYY-MM-DD) and alternative space-split string arrays
   const displayYear = React.useMemo(() => {
     if (!data.release_date) return 'N/A';
     
-    // Catch TMDB format (hyphen separated)
     if (data.release_date.includes('-')) {
       return data.release_date.split('-')[0];
     }
     
-    // Catch OMDB or space-separated format, grabbing the last segment
     const segments = data.release_date.trim().split(/\s+/);
     const lastSegment = segments[segments.length - 1];
     
@@ -122,7 +121,6 @@ export default function MovieDetailsCard({ data }: MovieDetailsProps) {
                           alt={actor.name} 
                           loading="lazy" 
                           onError={(e) => {
-                            // FIXED: Removed the crashing unsplash website string reference
                             const imgElement = e.target as HTMLImageElement;
                             imgElement.onerror = null;
                             imgElement.src = fallbackAvatar;
