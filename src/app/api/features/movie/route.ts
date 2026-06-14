@@ -1,95 +1,260 @@
 // src/app/api/features/movie/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 
-// Fallback configuration parameters if an environment variable is omitted
-const OMDB_API_KEY = process.env.OMDB_API_KEY || "YOUR_FREE_OMDB_KEY";
-const BASE_URL = "https://www.omdbapi.com/";
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+
+async function fetchWithRetry(
+  url: string,
+  headers: HeadersInit,
+  retries = 3
+) {
+  let lastError;
+
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, {
+        headers,
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error(`TMDB returned ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+
+      if (i < retries - 1) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (i + 1))
+        );
+      }
+    }
+  }
+
+  throw lastError;
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Extract core parameters passed from client requests
-    const s = searchParams.get("s")?.trim();                 // Title search expression (List view)
-    const t = searchParams.get("t")?.trim();                 // Strict Title search expression (Single detail view)
-    const genre = searchParams.get("genre")?.trim();         // Custom custom target genre parameter filter logic
-    const type = searchParams.get("type")?.trim();           // Target medium: movie, series, episode
-    const y = searchParams.get("y")?.trim();                 // Production or release year parameter
-    const page = searchParams.get("page") || "1";            // Target iteration data page (1-100)
-    
-    // Dedicated Season and Episode parameters for media detail queries
-    const season = searchParams.get("Season")?.trim();       // Target Season index
-    const episode = searchParams.get("Episode")?.trim();     // Target Episode index
+    const query = searchParams.get("q");
+    const movieId = searchParams.get("id");
+    const recommendationId =
+      searchParams.get("recommendations");
 
-    // Base validation boundary rule check
-    if (!s && !t) {
+    const token = process.env.TMDB_READ_ACCESS_TOKEN;
+
+    if (!token) {
       return NextResponse.json(
-        { Error: "Either parameter 's' (search list) or 't' (target title) is required." },
-        { status: 400 }
+        {
+          error: "TMDB_READ_ACCESS_TOKEN is missing.",
+        },
+        {
+          status: 500,
+        }
       );
     }
 
-    // Build the dynamic URL query parameters bound for OMDb API endpoints
-    const omdbParams = new URLSearchParams({ apikey: OMDB_API_KEY });
+    const headers = {
+      accept: "application/json",
+      Authorization: `Bearer ${token.trim()}`,
+    };
 
-    // Handle Use Case 1: Specific Episode/Season deep dive queries using strict titles (?t=Game of Thrones)
-    if (t) {
-      omdbParams.append("t", t);
-      if (season) omdbParams.append("Season", season);
-      if (episode) omdbParams.append("Episode", episode);
-      if (type) omdbParams.append("type", type);
-      if (y) omdbParams.append("y", y);
-      
-      const response = await fetch(`${BASE_URL}?${omdbParams.toString()}`);
-      const data = await response.json();
-      return NextResponse.json(data);
-    }
-
-    // Handle Use Case 2: Broad collection list searches via searching parameters (?s=Batman)
-    if (s) {
-      omdbParams.append("s", s);
-      omdbParams.append("page", page);
-      if (type) omdbParams.append("type", type);
-      if (y) omdbParams.append("y", y);
-
-      const response = await fetch(`${BASE_URL}?${omdbParams.toString()}`);
-      const data = await response.json();
-
-      // Implement client-side filtering if genre criteria array lookups are passed
-      if (data.Response === "True" && genre && data.Search) {
-        const lowercaseGenre = genre.toLowerCase();
-
-        // Query the complete data nodes to extract nested genre lists safely
-        const completeDetails = await Promise.all(
-          data.Search.map(async (item: any) => {
-            const detailUrl = `${BASE_URL}?apikey=${OMDB_API_KEY}&i=${item.imdbID}`;
-            const detailRes = await fetch(detailUrl);
-            return detailRes.json();
-          })
+    // ====================================================
+    // SEARCH MOVIES
+    // ====================================================
+    if (query) {
+      try {
+        const data = await fetchWithRetry(
+          `${TMDB_BASE_URL}/search/movie?query=${encodeURIComponent(
+            query.trim()
+          )}&include_adult=false&language=en-US&page=1`,
+          headers
         );
 
-        // Filter objects matching target genres
-        const filteredSearch = data.Search.filter((_: any, index: number) => {
-          const movieGenres = completeDetails[index]?.Genre?.toLowerCase() || "";
-          return movieGenres.includes(lowercaseGenre);
-        });
+        const suggestions =
+          data.results?.slice(0, 8).map((movie: any) => ({
+            id: movie.id,
+            title: movie.title || "Unknown Title",
+            release_year:
+              movie.release_date?.split("-")[0] || "N/A",
+            poster_path: movie.poster_path,
+            rating: movie.vote_average,
+          })) || [];
 
-        return NextResponse.json({
-          Search: filteredSearch,
-          totalResults: filteredSearch.length.toString(),
-          Response: filteredSearch.length > 0 ? "True" : "False",
-          Error: filteredSearch.length > 0 ? undefined : "No titles found matching that genre.",
-        });
+        return NextResponse.json(suggestions);
+      } catch (error: any) {
+        console.error("TMDB Search Error:", error);
+
+        return NextResponse.json(
+          {
+            error: error.message,
+          },
+          {
+            status: 500,
+          }
+        );
       }
-
-      return NextResponse.json(data);
     }
 
-  } catch (error: any) {
-    console.error("OMDb API Bridge Routing Error:", error);
+    // ====================================================
+    // RECOMMENDATIONS
+    // ====================================================
+    if (recommendationId) {
+      const parsedId = Number(recommendationId);
+
+      if (isNaN(parsedId)) {
+        return NextResponse.json(
+          {
+            error: "Invalid recommendation movie id",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      try {
+        const data = await fetchWithRetry(
+          `${TMDB_BASE_URL}/movie/${parsedId}/recommendations?language=en-US&page=1`,
+          headers
+        );
+
+        const recommendations =
+          data.results?.slice(0, 10).map((movie: any) => ({
+            id: movie.id,
+            title: movie.title || "Unknown Title",
+            release_year:
+              movie.release_date?.split("-")[0] || "N/A",
+            poster_path: movie.poster_path,
+            rating: movie.vote_average,
+            overview: movie.overview,
+          })) || [];
+
+        return NextResponse.json(recommendations);
+      } catch (error: any) {
+        console.error(
+          "TMDB Recommendation Error:",
+          error
+        );
+
+        return NextResponse.json(
+          {
+            error: error.message,
+          },
+          {
+            status: 500,
+          }
+        );
+      }
+    }
+
+    // ====================================================
+    // MOVIE DETAILS
+    // ====================================================
+    if (movieId) {
+      const parsedId = Number(movieId);
+
+      if (isNaN(parsedId)) {
+        return NextResponse.json(
+          {
+            error: "Invalid movie id",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      try {
+        // Fetch movie details
+        const details = await fetchWithRetry(
+          `${TMDB_BASE_URL}/movie/${parsedId}?language=en-US`,
+          headers
+        );
+
+        // Credits are optional
+        let credits: any = { cast: [] };
+
+        try {
+          credits = await fetchWithRetry(
+            `${TMDB_BASE_URL}/movie/${parsedId}/credits?language=en-US`,
+            headers
+          );
+        } catch (creditError) {
+          console.error(
+            "Credits lookup failed:",
+            creditError
+          );
+        }
+
+        const movie = {
+          id: details.id,
+          title: details.title,
+          tagline: details.tagline,
+          overview: details.overview,
+          release_date: details.release_date,
+          runtime: details.runtime,
+          vote_average: details.vote_average,
+
+          genres:
+            details.genres?.map(
+              (genre: any) => genre.name
+            ) || [],
+
+          poster_path: details.poster_path,
+          backdrop_path: details.backdrop_path,
+
+          cast:
+            credits.cast?.slice(0, 8).map((actor: any) => ({
+              name: actor.name,
+              character: actor.character,
+              profile_path: actor.profile_path,
+            })) || [],
+        };
+
+        return NextResponse.json(movie);
+      } catch (error: any) {
+        console.error(
+          "TMDB Detail Error:",
+          error
+        );
+
+        return NextResponse.json(
+          {
+            error: error.message,
+          },
+          {
+            status: 500,
+          }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { Error: "Internal connection failure processing OMDb payload data.", Details: error.message },
-      { status: 500 }
+      {
+        error:
+          "Pass either ?q=, ?id= or ?recommendations=",
+      },
+      {
+        status: 400,
+      }
+    );
+  } catch (error: any) {
+    console.error("Global Error:", error);
+
+    return NextResponse.json(
+      {
+        error: "Server exception",
+        details: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

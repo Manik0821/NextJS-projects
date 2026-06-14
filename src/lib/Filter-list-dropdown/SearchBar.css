@@ -1,0 +1,219 @@
+.search-bar-container {
+  /* Dynamic layout variables controlled by media queries */
+  --search-width: 100%;
+  --search-max-width: 80%; /* FIXED: Increased from 24rem to 32rem for a premium desktop presence */
+  --search-font: system-ui, -apple-system, sans-serif;
+  --search-input-height: 52px; /* FIXED: Taller input design tailored for desktop displays */
+  --search-input-padding: 12px 44px 12px 22px; /* Breathing room for rounded aesthetics */
+  --search-font-size: 1.05rem; /* Larger, readable typography scale for desktop */
+  
+  --color-primary: #0066cc;
+  --color-border: #ccc;
+  --color-text: #333;
+  --color-bg: #ffffff;
+
+  position: relative;
+  width: var(--search-width);
+  max-width: var(--search-max-width);
+  font-family: var(--search-font);
+  box-sizing: border-box;
+  margin: 1rem auto;
+  transition: max-width 0.2s ease;
+
+  & *, & *::before, & *::after {
+    box-sizing: border-box;
+  }
+
+  /* Disabled state styling block */
+  &.is-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Input container wrapper row */
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Fluid fully rounded corner profile layout */
+  .search-main-input {
+    width: 100%;
+    min-height: var(--search-input-height);
+    padding: var(--search-input-padding);
+    font-size: var(--search-font-size);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px; 
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, min-height 0.2s ease;
+    -webkit-appearance: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 6px 16px rgba(0, 102, 204, 0.1), 0 0 0 4px rgba(0, 102, 204, 0.15);
+      transform: translateY(-1px); 
+    }
+  }
+
+  /* Action button to flush text values */
+  .search-clear-btn {
+    position: absolute;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease, right 0.2s ease;
+
+    &:hover {
+      color: #333;
+      background-color: #f0f0f0;
+    }
+  }
+
+  /* Results Dropdown Container with Fluid Height adaptation */
+  .search-results-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 20px; /* Enhanced modern curvature profile for desktop */
+    background-color: var(--color-bg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    overflow: hidden;
+    
+    animation: menuReveal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top center;
+  }
+
+  .search-options-list {
+    max-height: clamp(200px, 50vh, 400px); /* Expanded drop height for desktop visibility */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* List component row interactions */
+  .search-option-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 48px; /* Roomier select bars on desktop */
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background-color 0.15s ease;
+
+    &:hover, &.is-focused {
+      background-color: #f5f9ff; 
+      color: #000000;
+      outline: none;
+    }
+
+    .option-main-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-grow: 1;
+      min-width: 0;
+    }
+  }
+
+  /* Badge labels decoration markup */
+  .option-meta-tags {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .meta-badge {
+    font-size: 0.8rem;
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 4px 10px;
+    border-radius: 8px; 
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+  }
+  
+  .search-option-item:hover .meta-badge,
+  .search-option-item.is-focused .meta-badge {
+    background-color: #e2eeff;
+    color: var(--color-primary);
+  }
+}
+
+/* Kinetic reveal framing definition */
+@keyframes menuReveal {
+  from {
+    opacity: 0;
+    transform: scaleY(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+/* --- Viewport Breakpoints Response --- */
+
+/* Small Smartphone/Mobile Screens (Compact Mode Override) */
+@media (max-width: 480px) {
+  .search-bar-container {
+    --search-max-width: 100%; /* Stretch wall-to-wall on small displays */
+    --search-input-height: 40px; /* FIXED: Compact, finger-friendly mobile height profile */
+    --search-input-padding: 6px 36px 6px 14px; /* Tighter internal padding */
+    --search-font-size: 1rem; /* FIXED: Exactly 16px to completely bypass forced iOS viewport zooming */
+    
+    .search-clear-btn {
+      right: 10px; /* Snug button positioning alignment */
+    }
+
+    .search-results-menu {
+      border-radius: 12px; /* Tighter border radius profiles for thin phone frames */
+      top: calc(100% + 6px);
+    }
+
+    .search-options-list {
+      max-height: clamp(160px, 42vh, 260px); /* Compact dropdown length so it doesn't take over small phone screens */
+    }
+
+    .search-option-item {
+      min-height: 42px; /* Tighter vertical packing for search hits */
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      gap: 10px;
+    }
+
+    .meta-badge {
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  }
+}
+
+/* Landscape orientation protection on short windows */
+@media (max-height: 500px) and (orientation: landscape) {
+  .search-bar-container {
+    margin: 0 1rem;
+    .search-options-list {
+      max-height: 130px; /* Compact safety ceiling */
+    }
+  }
+}
