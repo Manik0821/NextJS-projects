@@ -7,6 +7,7 @@ import { useRecommendations } from "../../hooks/useRecommendations";
 interface MovieRecommendationsProps {
   currentMovieId: string;
   activeMovieTitle?: string;
+  media_type?:string,
   onMovieSelect?: (movieData: any) => void;
 }
 
@@ -28,8 +29,8 @@ export default function MovieRecommendations({
   const { UpdateMovie, UpdateMovieId } = useMovieStore();
 
   const handleLoadDetails = (movie: any) => {
-    UpdateMovieId(String(movie.id));
-    UpdateMovie(movie.title);
+    UpdateMovieId(String(movie.id),movie.media_type);
+    UpdateMovie(movie.title,movie.media_type);
 
     onMovieSelect?.(movie);
 

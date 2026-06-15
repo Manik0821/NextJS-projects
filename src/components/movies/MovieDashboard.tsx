@@ -15,6 +15,7 @@ export default function MovieSearchDashboard() {
   const {
     currMovie,
     currMovieId,
+    media_type, // 💡 Pull active media_type out of store to pass down into sections
   } = useMovieStore();
 
   // Full movie profile
@@ -38,7 +39,7 @@ export default function MovieSearchDashboard() {
     handleDropdownSelect,
     handleRecommendationSelect,
   } = useMovieSelection(
-    apiOptions,
+    sortedOptions, // 🔥 FIXED: Pass sortedOptions so it perfectly matches what the SearchBar uses!
     setSearchQuery
   );
 
@@ -52,7 +53,7 @@ export default function MovieSearchDashboard() {
           value={searchQuery}
           onSelect={handleDropdownSelect}
           onSearchChange={setSearchQuery}
-          placeholder="Type to search movies..."
+          placeholder="Type to search movies or TV shows..."
         />
       </div>
 

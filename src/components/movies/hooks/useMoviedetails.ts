@@ -5,16 +5,12 @@ import { fetchMovieDetails } from "../services/movieApi";
 
 export function useMovieDetails(currMovieId: string) {
   const [movieDetails, setMovieDetails] = useState<any>(null);
-
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
+  const [canShowAISummary, setCanShowAISummary] = useState(false);
 
-  const [canShowAISummary, setCanShowAISummary] =
-    useState(false);
-
-  const { currMovie, UpdateMovie } =
-    useMovieStore();
+  // 1. EXTRACT media_type FROM YOUR STATE STORE 👇
+  const { currMovie, media_type, UpdateMovie } = useMovieStore();
 
   useEffect(() => {
     if (!currMovieId) {
@@ -26,22 +22,20 @@ export function useMovieDetails(currMovieId: string) {
     let isCurrentRequest = true;
 
     async function getMovieDetails() {
-      // Cache lookup
-      if (detailsCache[currMovieId]) {
-        const cachedData =
-          detailsCache[currMovieId];
+      // Create a unique cache key that combines ID and type to prevent data overlaps
+      const cacheKey = `${currMovieId}_${media_type}`;
 
+      // Cache lookup
+      if (detailsCache[cacheKey]) {
+        const cachedData = detailsCache[cacheKey];
         setMovieDetails(cachedData);
 
-        if (
-          cachedData.title &&
-          currMovie !== cachedData.title
-        ) {
-          UpdateMovie(cachedData.title);
+        if (cachedData.title && currMovie !== cachedData.title) {
+          // Use cached media_type or fallback to global context state
+          UpdateMovie(cachedData.title, cachedData.media_type || media_type);
         }
 
         setCanShowAISummary(true);
-
         return;
       }
 
@@ -50,29 +44,23 @@ export function useMovieDetails(currMovieId: string) {
         setError(null);
         setCanShowAISummary(false);
 
-        const data = await fetchMovieDetails(
-            currMovieId
-          );
+        // 2. FORWARD media_type DOWN TO THE API CALLER 👇
+        const data = await fetchMovieDetails(currMovieId, media_type);
 
         if (!isCurrentRequest) return;
 
-        detailsCache[currMovieId] = data;
-
+        // Save data into structural cache tracking media variations smoothly
+        detailsCache[cacheKey] = { ...data, media_type };
         setMovieDetails(data);
 
-        if (
-          data.title &&
-          currMovie !== data.title
-        ) {
-          UpdateMovie(data.title);
+        if (data.title && currMovie !== data.title) {
+          UpdateMovie(data.title, data.media_type);
         }
 
         setCanShowAISummary(true);
       } catch (err: any) {
         if (isCurrentRequest) {
-          setError(
-            err.message || "An error occurred"
-          );
+          setError(err.message || "An error occurred");
         }
       } finally {
         if (isCurrentRequest) {
@@ -86,7 +74,8 @@ export function useMovieDetails(currMovieId: string) {
     return () => {
       isCurrentRequest = false;
     };
-  }, [currMovieId]);
+    // 3. ADD media_type TO THE DEPENDENCY ARRAY SO IT RE-TRIGGERS ON SWITCHES 🔄
+  }, [currMovieId, media_type]);
 
   return {
     movieDetails,

@@ -9,6 +9,7 @@ export interface MovieDetails {
   genres?: string[];
   poster_path?: string;
   backdrop_path?: string;
+  media_type?: string;
 }
 
 export interface MovieOption {
@@ -16,4 +17,6 @@ export interface MovieOption {
   value: string;
   year: string;
   rating: string;
+  movie_data:string;
+  media_type?:string;
 }
