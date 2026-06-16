@@ -32,7 +32,7 @@ export function useMovieDetails(currMovieId: string) {
 
         if (cachedData.title && currMovie !== cachedData.title) {
           // Use cached media_type or fallback to global context state
-          UpdateMovie(cachedData.title, cachedData.media_type || media_type);
+          UpdateMovie(cachedData.title,cachedData.movieId, cachedData.release_year, cachedData.media_type || media_type);
         }
 
         setCanShowAISummary(true);
@@ -54,7 +54,7 @@ export function useMovieDetails(currMovieId: string) {
         setMovieDetails(data);
 
         if (data.title && currMovie !== data.title) {
-          UpdateMovie(data.title, data.media_type);
+          UpdateMovie(data.title,data.movieId,data.release_year, data.media_type);
         }
 
         setCanShowAISummary(true);

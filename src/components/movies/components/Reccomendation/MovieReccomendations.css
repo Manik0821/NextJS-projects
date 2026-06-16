@@ -1,12 +1,12 @@
 .recommendations-container {
     --rec-bg: #1f2937;
     --rec-border: #374151;
-    --rec-text-main: #ffffff;
+    --rec-text-main: #000000;
     --rec-text-muted: #9ca3af;
     --rec-accent: #3b82f6;
   
     width: 100%;
-    margin-top: 2rem;
+    margin-top: 1rem;
     background-color: transparent;
     font-family: system-ui, -apple-system, sans-serif;
   
@@ -22,11 +22,12 @@
         font-weight: 600;
         color: var(--rec-text-main);
         margin: 0;
+        text-align: center;
       }
   
       .recommendations-subtitle {
         font-size: 1.1rem;
-        color: var(--rec-text-muted);
+        color: var(--rec-accent);
         margin: 2px 0 0 0;
         text-align: center;
       }
@@ -103,7 +104,7 @@
       .rec-card-title {
         font-size: 0.85rem;
         font-weight: 500;
-        color: var(--rec-text-main);
+        color: var(--rec-text-muted);
         margin: 0;
         white-space: nowrap;
         overflow: hidden;

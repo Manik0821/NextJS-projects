@@ -15,6 +15,7 @@ export default function MovieSearchDashboard() {
   const {
     currMovie,
     currMovieId,
+    release_year,
     media_type, // 💡 Pull active media_type out of store to pass down into sections
   } = useMovieStore();
 
@@ -81,7 +82,7 @@ export default function MovieSearchDashboard() {
         <div className="movie-ai-section">
           <AISummary
             title={`Cinematic Analytics: "${currMovie}"`}
-            prompt="Analyze the historical relevance, themes, tropes, and public reception of Movie/Genre. Outline what makes these films distinct."
+            prompt={`You are an cinematic summary agent Analyze the historical relevance, themes, tropes, and public reception of ${media_type === "tv" ? "tv series" : "movie"} ${currMovie} from ${release_year}. Outline what makes these films/series distinct. Make sure to only give the relevant data about the movie mentioned with release date`}
             args={[currMovie, movieDetails]}
             triggerKey={currMovieId}
             wordLimit={100}
@@ -89,13 +90,38 @@ export default function MovieSearchDashboard() {
         </div>
       )}
 
-      {/* Recommendations */}
       {!isLoading && movieDetails && (
-        <MovieRecommendations
-          currentMovieId={String(movieDetails.id)}
-          activeMovieTitle={movieDetails.title}
-          onMovieSelect={handleRecommendationSelect}
-        />
+        <>
+          <MovieRecommendations
+            title="Recommended Movies"
+            subtitle="Recommended Movies"
+            type="recommendations"
+            currentMovieId={movieDetails.id}
+            media_type={movieDetails.media_type}
+            activeMovieTitle={movieDetails.title}
+            onMovieSelect={handleRecommendationSelect}
+          />
+
+          <MovieRecommendations
+            title="Similar Movies"
+            subtitle="Based on your search"
+            type="similar"
+            currentMovieId={movieDetails.id}
+            media_type={movieDetails.media_type}
+            activeMovieTitle={movieDetails.title}
+            onMovieSelect={handleRecommendationSelect}
+          />
+
+          <MovieRecommendations
+            title="Popular Right Now"
+            subtitle="Trending among viewers"
+            type="popular"
+            currentMovieId={movieDetails.id}
+            media_type={movieDetails.media_type}
+            activeMovieTitle={movieDetails.title}
+            onMovieSelect={handleRecommendationSelect}
+          />
+        </>
       )}
 
     </div>

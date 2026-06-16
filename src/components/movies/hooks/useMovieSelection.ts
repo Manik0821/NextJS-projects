@@ -11,7 +11,6 @@ export function useMovieSelection(
 ) {
   const {
     UpdateMovie,
-    UpdateMovieId,
   } = useMovieStore();
 
   // ==========================================
@@ -28,9 +27,7 @@ export function useMovieSelection(
     // FIXED: Extract the media type straight out of the matched option item! ⚡
     // We access 'media_type' (camelCase) to perfectly match your movieApi.ts payload map.
     const resolvedMediaType = selectedOption.media_type || "movie";
-
-    UpdateMovieId(value, resolvedMediaType);
-    UpdateMovie(selectedOption.label, resolvedMediaType);
+    UpdateMovie(selectedOption.label,value,selectedOption.year, resolvedMediaType);
   };
 
   // ==========================================
@@ -46,13 +43,16 @@ export function useMovieSelection(
     const nextTitle =
       moviePayload.title || "";
 
+    const nextYear = String(
+      moviePayload.release_year || moviePayload.year
+    );
+
     // FIXED: Default safely to "movie" if the card is missing a property key
     const nextMediaType = String(
       moviePayload.media_type || "movie"
     );
-
-    UpdateMovieId(nextId, nextMediaType);
-    UpdateMovie(nextTitle, nextMediaType);
+    console.log(moviePayload);
+    UpdateMovie(nextTitle,nextId,nextYear, nextMediaType);
 
     setSearchQuery(nextTitle);
 

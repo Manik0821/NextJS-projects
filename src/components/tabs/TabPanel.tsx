@@ -17,7 +17,7 @@ export default function TabPanel({
     <div
       className="
     tab-panel
-    rounded-3xl
+    rounded-2xl
     bg-white
     p-1
     shadow-sm"

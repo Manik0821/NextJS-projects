@@ -141,7 +141,7 @@ export default function WeatherPage() {
             prompt="Give some interesting facts about the climate and weather patterns."
             args={[aiCity]}
             triggerKey={aiCity} // Complete reference safety lock!
-            wordLimit={120}
+            wordLimit={100}
           />
         )}
 

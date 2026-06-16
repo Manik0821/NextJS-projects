@@ -5,15 +5,26 @@ import { useMovieStore } from "@/lib/store/MovieStore";
 import { useRecommendations } from "../../hooks/useRecommendations";
 
 interface MovieRecommendationsProps {
-  currentMovieId: string;
   activeMovieTitle?: string;
-  media_type?:string,
+  currentMovieId: string;
+  release_year?: string;
+  media_type?: string;
+
+  type?: "recommendations" | "similar" | "popular";
+
+  title?: string;
+  subtitle?: string;
+
   onMovieSelect?: (movieData: any) => void;
 }
 
 export default function MovieRecommendations({
-  currentMovieId,
   activeMovieTitle,
+  currentMovieId,
+  media_type,
+  type = "recommendations",
+  title = "Recommended Movies",
+  subtitle = "Similar movies you might enjoy",
   onMovieSelect,
 }: MovieRecommendationsProps) {
 
@@ -23,14 +34,14 @@ export default function MovieRecommendations({
     error,
   } = useRecommendations(
     currentMovieId,
-    activeMovieTitle
+    type,
+    media_type
   );
 
-  const { UpdateMovie, UpdateMovieId } = useMovieStore();
+  const { UpdateMovie } = useMovieStore();
 
   const handleLoadDetails = (movie: any) => {
-    UpdateMovieId(String(movie.id),movie.media_type);
-    UpdateMovie(movie.title,movie.media_type);
+    UpdateMovie(movie.title,String(movie.id),movie.release_date || movie.release_year,movie.media_type);
 
     onMovieSelect?.(movie);
 
@@ -52,13 +63,13 @@ export default function MovieRecommendations({
       aria-label="Related Recommendations"
     >
       <header className="recommendations-header">
-        <h3 className="recommendations-title">
-          Recommended Movies
-        </h3>
+      <h3 className="recommendations-title">
+  {title}
+</h3>
 
-        <p className="recommendations-subtitle">
-          Similar movies you might enjoy
-        </p>
+{/* <p className="recommendations-subtitle">
+  {subtitle}
+</p> */}
       </header>
 
       {loading && (
