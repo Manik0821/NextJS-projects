@@ -7,7 +7,7 @@ export const PATTERNS = [
 
 export const PAGE_DATA: Record<string, { title: string; subTitle: string; subHeading?:string }> = {
     '/': { title: 'Home Dashboard', subTitle: '', subHeading : 'Welcome Back!' },
-    '/game': { title: 'Board Game', subTitle: 'Play against the computer' },
+    '/game': { title: 'Board Game', subTitle: 'Play against other Player' },
     '/game/card': { title: 'Card Component', subTitle: 'This is a Card Component' },
     '/poll': { title: 'Poll Component', subTitle: 'Vote for your favorite option' },
     '/carousel': { title: 'Carousel Component', subTitle: 'Explore our carousel examples' },

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react"; // Added useState
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { features } from "@/app/features/feature-list"; // Clean relative step-out path
 import './fullScreenModal.css';
 
 type FullScreenModalProps = {
@@ -14,10 +15,10 @@ type FullScreenModalProps = {
 
 export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClose, title, children }) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const [mounted, setMounted] = useState(false); // Track if we are on the client
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true); // Mark as mounted once we reach the client
+        setMounted(true);
 
         if (!isOpen) return;
 
@@ -36,7 +37,6 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
         };
     }, [isOpen, onClose]);
 
-    // Important: Return null if we are still on the server to avoid the error
     if (!mounted) return null;
 
     return createPortal(
@@ -63,33 +63,19 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
                 <main className="modal-content">
                     <div className="modal-navigation-tabs">
                         <nav className="tab-buttons">
-                            <Link href="/" className="nav-tab-item" onClick={onClose}>
-                                🏠 Home
-                            </Link>
-
-                            <Link href="/weather" className="nav-tab-item" onClick={onClose}>
-                                🌤️ Weather App
-                            </Link>
-
-                            <Link href="/movie" className="nav-tab-item" onClick={onClose}>
-                                🎬 Movie Search
-                            </Link>
-
-                            <Link href="/game" className="nav-tab-item" onClick={onClose}>
-                                🎮 Play Game
-                            </Link>
-
-                            <Link href="/poll" className="nav-tab-item" onClick={onClose}>
-                                📊 Polls
-                            </Link>
-
-                            {/* <Link href="/carousel" className="nav-tab-item" onClick={onClose}>
-                                🎠 Carousel
-                            </Link> */}
-
-                            <Link href="/ai-transcript" className="nav-tab-item" onClick={onClose}>
-                                🤖 AI Chatbot
-                            </Link>
+                            {/* Dynamically renders navigation links matching display rules */}
+                            {features
+                              .filter((feature) => feature.display) // Filter out hidden links
+                              .map((feature, index) => (
+                                <Link 
+                                    key={index} 
+                                    href={feature.path} 
+                                    className="nav-tab-item" 
+                                    onClick={onClose}
+                                >
+                                    {feature.title}
+                                </Link>
+                            ))}
                         </nav>
                         <div className="tab-details">
                             {children || <p>Welcome! Select an option above to navigate.</p>}
@@ -101,6 +87,6 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
                 </main>
             </div>
         </div>,
-        document.body // This is now safe because we checked 'mounted'
+        document.body
     );
 };

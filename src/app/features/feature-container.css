@@ -1,0 +1,206 @@
+/* --- OVERALL DASHBOARD CANVAS LAYOUT --- */
+.main-dashboard-viewport {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem 1rem; /* Compact padding on mobile */
+  background-color: #f8fafc; 
+  overflow: hidden;
+  box-shadow: inset 0 24px 48px -24px rgba(0, 0, 0, 0.04),
+              inset 24px 0 48px -24px rgba(0, 0, 0, 0.02),
+              inset -24px 0 48px -24px rgba(0, 0, 0, 0.02);
+
+  @media (min-width: 640px) {
+    padding: 5rem 3rem; /* Standard spacing restores on larger screens */
+  }
+
+  /* Soft, drifting aura background graphic mesh */
+  .dashboard-glow-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.8;
+    pointer-events: none;
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(29, 59, 255, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.03) 0%, transparent 50%);
+  }
+
+  .dashboard-content-layer {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* --- REFINED ACCENT HEADING SYSTEM --- */
+.dashboard-header {
+  margin-bottom: 2rem; /* Reduced bottom whitespace on mobile */
+  text-align: left;
+
+  @media (min-width: 640px) {
+    margin-bottom: 3.5rem;
+  }
+
+  .dashboard-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+
+    .dashboard-main-title {
+      font-size: 1.75rem; /* Shrunk for phone viewports */
+      font-weight: 800;
+      color: #0f172a; 
+      letter-spacing: -0.03em;
+      margin: 0;
+
+      @media (min-width: 640px) {
+        font-size: 2.25rem;
+      }
+    }
+
+    .dashboard-count-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1d3bff;
+      background-color: #eff2ff;
+      padding: 0.25rem 0.65rem;
+      border-radius: 50px;
+      border: 1px solid rgba(29, 59, 255, 0.1);
+    }
+  }
+
+  .dashboard-subtitle {
+    font-size: 0.95rem; /* Tighter baseline presentation */
+    line-height: 1.5;
+    color: #475569;
+    max-width: 600px;
+    margin: 0;
+
+    @media (min-width: 640px) {
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+  }
+}
+
+/* --- SEMANTIC CARDS & WORKING GRID --- */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem; /* Tightened gap parameters on phones */
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+.card-wrapper {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+
+  .card-inner-stretch {
+    height: 100%;
+  }
+
+  .card-container {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.4s ease, 
+                border-color 0.4s ease;
+  }
+
+  .card-content-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    flex-grow: 1;
+    min-height: 110px; /* Reduced minimum vertical footprint for device comfort */
+
+    @media (min-width: 640px) {
+      min-height: 140px;
+    }
+
+    .card-tag-wrapper {
+      margin-bottom: 0.5rem;
+      display: flex;
+
+      .card-badge {
+        font-size: 0.675rem; /* Scaled down slightly */
+        font-weight: 700;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+
+        &.badge-utility { background-color: #eff6ff; color: #1e40af; }
+        &.badge-entertainment { background-color: #fdf2f8; color: #9d174d; }
+        &.badge-interactive { background-color: #f0fdf4; color: #166534; }
+        &.badge-social { background-color: #fffbeb; color: #92400e; }
+        &.badge-ai-assistant { background-color: #f5f3ff; color: #5b21b6; }
+        &.badge-app { background-color: #f1f5f9; color: #334155; }
+      }
+    }
+
+    .card-description {
+      margin: 0 0 1rem 0; /* Reduced margins to minimize wasted dead-space */
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #64748b;
+      flex-grow: 1;
+
+      @media (min-width: 640px) {
+        margin: 0 0 1.5rem 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+    }
+
+    .card-action-link {
+      color: #1d3bff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: auto;
+      transition: gap 0.2s ease;
+
+      @media (min-width: 640px) {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  /* Hover scaled down slightly for touch mechanics safety */
+  &:hover {
+    @media (min-width: 640px) {
+      .card-container {
+        transform: translateY(-8px);
+        border-color: #cbd5e1;
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08),
+                    0 10px 15px -5px rgba(29, 59, 255, 0.03);
+      }
+
+      .card-content-layout .card-action-link {
+        gap: 0.6rem;
+      }
+    }
+  }
+}

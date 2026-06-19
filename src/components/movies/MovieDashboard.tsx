@@ -16,10 +16,9 @@ export default function MovieSearchDashboard() {
     currMovie,
     currMovieId,
     release_year,
-    media_type, // 💡 Pull active media_type out of store to pass down into sections
+    media_type, 
   } = useMovieStore();
 
-  // Full movie profile
   const {
     movieDetails,
     loading: isLoading,
@@ -27,7 +26,6 @@ export default function MovieSearchDashboard() {
     canShowAISummary,
   } = useMovieDetails(currMovieId);
 
-  // Search/autocomplete
   const {
     searchQuery,
     setSearchQuery,
@@ -35,14 +33,16 @@ export default function MovieSearchDashboard() {
     sortedOptions,
   } = useMovieSearch(movieDetails);
 
-  // Selection handlers
   const {
     handleDropdownSelect,
     handleRecommendationSelect,
   } = useMovieSelection(
-    sortedOptions, // 🔥 FIXED: Pass sortedOptions so it perfectly matches what the SearchBar uses!
+    sortedOptions, 
     setSearchQuery
   );
+
+  // Helper flag to check if we are in an empty/initial landing state
+  const isInitialLandingState = !isLoading && !movieDetails && !error;
 
   return (
     <div className="movie-dashboard-wrapper">
@@ -69,6 +69,17 @@ export default function MovieSearchDashboard() {
       {error && (
         <div className="dashboard-status-text error">
           {error}
+        </div>
+      )}
+
+      {/* EMPTY LANDING STATE: Shows beautiful placeholders when no movie is loaded yet */}
+      {isInitialLandingState && (
+        <div className="movie-landing-placeholder">
+          <div className="placeholder-illustration">🎬</div>
+          <h2 className="placeholder-title">Discover Your Next Watch</h2>
+          <p className="placeholder-subtitle">
+            Search across thousands of blockbusters, indie gems, and trending TV series to uncover detailed analytics and dynamic recommendations.
+          </p>
         </div>
       )}
 

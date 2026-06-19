@@ -1,12 +1,11 @@
 import './card.css';
 
 type CardProps = {
-    title?: string,
+    title?: string;
     children?: React.ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({title="Card Title",children=<h2>This is a Card</h2>}) => {
-
+export const Card = ({ title = "Card Title", children }: CardProps) => {
     return (
         <div className="card-container">
             <div className="card">
@@ -14,9 +13,9 @@ export const Card: React.FC<CardProps> = ({title="Card Title",children=<h2>This 
                     {title}
                 </div>
                 <div className="card-body">
-                    {children}
+                    {children || <h2>This is a Card</h2>}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
