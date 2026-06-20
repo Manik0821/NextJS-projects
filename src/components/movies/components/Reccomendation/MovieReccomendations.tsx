@@ -41,7 +41,7 @@ export default function MovieRecommendations({
   const { UpdateMovie } = useMovieStore();
 
   const handleLoadDetails = (movie: any) => {
-    UpdateMovie(movie.title,String(movie.id),movie.release_date || movie.release_year,movie.media_type);
+    UpdateMovie(movie.title, String(movie.id), movie.release_date || movie.release_year, movie.media_type);
 
     onMovieSelect?.(movie);
 
@@ -57,19 +57,17 @@ export default function MovieRecommendations({
   const fallbackPoster =
     "/images/movie-placeholder.png";
 
+    if(movies.length === 0)return null;
+
   return (
     <section
       className="recommendations-container"
       aria-label="Related Recommendations"
     >
       <header className="recommendations-header">
-      <h3 className="recommendations-title">
-  {title}
-</h3>
-
-{/* <p className="recommendations-subtitle">
-  {subtitle}
-</p> */}
+        <h3 className="recommendations-title">
+          {title}
+        </h3>
       </header>
 
       {loading && (
@@ -95,11 +93,10 @@ export default function MovieRecommendations({
           {movies.map((movie) => (
             <article
               key={movie.id}
-              className={`rec-card ${
-                activeMovieTitle === movie.title
+              className={`rec-card ${activeMovieTitle === movie.title
                   ? "is-active"
                   : ""
-              }`}
+                }`}
               onClick={() => handleLoadDetails(movie)}
               role="button"
               tabIndex={0}

@@ -1,256 +1,454 @@
 .movie-detail-card {
-    --bg-card: #1a1a1a;
-    --text-main: #ffffff;
-    --text-muted: #aaaaaa;
-    --accent-gold: #ffcc00;
-    
-    position: relative;
+  /* Neon Cinema Theme Engine */
+  --bg-card: #0b0f19;
+  /* Deep galactic obsidian */
+  --bg-card-rgb: 11, 15, 25;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-gold: #ffb800;
+  /* Richer, punchier cinematic gold */
+  --accent-neon: #38bdf8;
+  /* Cyberpunk cyan for electric highlight hits */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+
+  position: relative;
+  width: 100%;
+  max-width: 58rem;
+  /* Slightly wider display presence */
+  margin: 3rem auto;
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 24px;
+  /* Ultra-modern smoother corner curvature */
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: transform 0.4s var(--ease-fluid), box-shadow 0.4s var(--ease-fluid);
+  will-change: transform, box-shadow;
+
+  /* Subtle card elevation pop on mouse entry */
+  &:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow:
+      0 0 30px rgba(56, 189, 248, 0.08),
+      0 30px 60px -15px rgba(0, 0, 0, 0.7);
+  }
+
+  & *,
+  & *::before,
+  & *::after {
+    box-sizing: border-box;
+  }
+
+  /* Immersive backdrop canvas with dynamic light bleed */
+  .movie-backdrop-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 56rem;
-    margin: 2rem auto;
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border-radius: 12px;
+    height: 100%;
+    /* Spans full height for unified background blending */
+    background-size: cover;
+    background-position: center 15%;
+    z-index: 1;
+    opacity: 0.18;
+    filter: blur(4px) scale(1.02);
+    /* Dreamy atmospheric depth */
+    transition: transform 0.6s var(--ease-fluid), opacity 0.4s ease;
+  }
+
+  &:hover .movie-backdrop-hero {
+    transform: scale(1.05);
+    /* Soft background ambient movement */
+    opacity: 0.25;
+  }
+
+  /* Complex high-end vignette masking track */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(to bottom,
+        rgba(var(--bg-card-rgb), 0.4) 0%,
+        rgba(var(--bg-card-rgb), 0.85) 300px,
+        rgba(var(--bg-card-rgb), 1) 100%);
+    pointer-events: none;
+  }
+
+  .movie-main-content {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    /* Meatier poster presence */
+    gap: 2.5rem;
+    padding: 4rem 3rem 3rem 3rem;
+  }
+
+  /* 3D Kinetic Poster Frame with Parallax Floating Effect */
+  .movie-poster-frame {
+    width: 100%;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
-    font-family: system-ui, -apple-system, sans-serif;
-  
-    & *, & *::before, & *::after {
-      box-sizing: border-box;
-    }
-  
-    .movie-backdrop-hero {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    aspect-ratio: 2 / 3;
+    background-color: #1e293b;
+    align-self: start;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(2deg) rotateY(-4deg);
+    /* Striking default stance */
+    transition: transform 0.5s var(--ease-spring), box-shadow 0.4s var(--ease-fluid);
+    will-change: transform, box-shadow;
+
+    &::after {
+      content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 320px;
-      background-size: cover;
-      background-position: center top;
-      z-index: 1;
-      opacity: 0.25;
+      inset: 0;
+      border-radius: 16px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      /* Sleek inner rim lighting */
+      pointer-events: none;
     }
-  
-    .movie-main-content {
-      position: relative;
-      z-index: 2;
-      display: grid;
-      /* Fixed: Using minmax(0, 1fr) gives the grid column tracking permission to break down and shrink */
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 2rem;
-      padding: 3rem 2rem 2rem 2rem;
-    }
-  
-    .movie-poster-frame {
+
+    img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s var(--ease-fluid);
+    }
+
+    /* Pop out reaction on hover */
+    &:hover {
+      transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.04);
+      box-shadow:
+        0 0 25px rgba(56, 189, 248, 0.2),
+        0 30px 60px rgba(0, 0, 0, 0.8);
+
+      img {
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  .movie-text-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  .movie-header-group {
+    .movie-display-title {
+      font-size: 2.75rem;
+      /* Massive theatrical typography scale */
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.15;
+      background: linear-gradient(180deg, #ffffff 60%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      word-wrap: break-word;
+    }
+
+    .movie-tagline-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+      font-style: normal;
+      /* Dropped italic for a cleaner premium look */
+      letter-spacing: 0.01em;
+      color: var(--accent-neon);
+      /* Techy futuristic color accent choice */
+      margin: 0;
+      word-wrap: break-word;
+      opacity: 0.9;
+    }
+  }
+
+  /* Micro-Interactions on Badges */
+  .movie-stats-strip {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .stat-badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 12px;
       border-radius: 8px;
+      background-color: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      white-space: nowrap;
+      transition: all 0.2s var(--ease-fluid);
+
+      &.fill-rating {
+        background-color: rgba(255, 184, 0, 0.1);
+        border-color: rgba(255, 184, 0, 0.25);
+        color: var(--accent-gold);
+        letter-spacing: 0.02em;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        background-color: rgba(51, 65, 85, 0.8);
+      }
+    }
+  }
+
+  .movie-genres-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    .genre-pill {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      /* Seamless fluid capsule configuration */
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: all 0.2s var(--ease-fluid);
+
+      &:hover {
+        color: #ffffff;
+        border-color: var(--accent-neon);
+        background-color: rgba(56, 189, 248, 0.05);
+        transform: scale(1.04);
+      }
+    }
+  }
+
+  .movie-synopsis {
+    h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      /* Elevated tracking space formatting */
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin: 0;
+      color: #cbd5e1;
+      /* Softened text contrast matrix prevents eye fatigue */
+      word-wrap: break-word;
+    }
+  }
+
+  /* Ultra-Premium Kinetic Cast Section */
+  .movie-cast-section {
+    margin-top: 0.75rem;
+    width: 100%;
+    overflow: hidden;
+
+    h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 0 0 0.85rem 0;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Slick track alignment controls */
+    .cast-scroll-grid {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 4px 4px 12px 4px;
+      /* Room for floating elevations */
+      width: 100%;
+      scroll-snap-type: x proximity;
+      /* Snappy premium scrolling feed logic */
+      -webkit-overflow-scrolling: touch;
+
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        transition: background 0.2s ease;
+      }
+
+      &:hover::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        /* Reveal scrollbar clearly on hover container */
+      }
+    }
+
+    /* Pill Node Interactive Evolution */
+    .cast-member-node {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      min-width: 200px;
+      max-width: 240px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 8px 16px 8px 10px;
+      border-radius: 40px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      transition: all 0.25s var(--ease-fluid);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .cast-avatar-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      aspect-ratio: 2 / 3;
-      background-color: #2a2a2a;
-      align-self: start;
-  
+      flex-shrink: 0;
+      background-color: #1e293b;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      transition: transform 0.25s var(--ease-fluid);
+
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
       }
-    }
-  
-    .movie-text-details {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      min-width: 0; /* Critical CSS Fix: Overrides implicit flex basis sizes to let content shrink */
-    }
-  
-    .movie-header-group {
-      .movie-display-title {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin: 0 0 0.25rem 0;
-        line-height: 1.2;
-        word-wrap: break-word; /* Fixed: Prevents long continuous string titles from breaking bounds */
-      }
-      .movie-tagline-text {
-        font-size: 1.1rem;
-        font-style: italic;
-        color: var(--text-muted);
-        margin: 0;
-        word-wrap: break-word;
-      }
-    }
-  
-    .movie-stats-strip {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-      flex-wrap: wrap; /* Fixed: Prevents collision on extreme scaling dimensions */
-  
-      .stat-badge {
-        font-size: 0.85rem;
-        padding: 4px 10px;
-        border-radius: 4px;
-        background-color: #2a2a2a;
-        font-weight: 500;
-        white-space: nowrap;
-  
-        &.fill-rating {
-          background-color: rgba(255, 204, 0, 0.15);
-          color: var(--accent-gold);
-        }
-      }
-    }
-  
-    .movie-genres-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap; /* Fixed: Allows badges to spill downward cleanly instead of cutting off */
-  
-      .genre-pill {
-        font-size: 0.8rem;
-        padding: 4px 12px;
-        border-radius: 20px;
-        border: 1px solid #444;
-        color: var(--text-muted);
-        white-space: nowrap;
-      }
-    }
-  
-    .movie-synopsis {
-      h3 {
-        font-size: 1.1rem;
-        margin: 0 0 0.5rem 0;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      p {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin: 0;
-        color: #dddddd;
-        word-wrap: break-word; /* Fixed: Forces natural wrapping loops over explicit boundaries */
-      }
-    }
-  
-    .movie-cast-section {
-      margin-top: 0.5rem;
-      width: 100%;
-      overflow: hidden; /* Fixed: Traps scrolling logic inline */
-  
-      h3 {
-        font-size: 1.1rem;
-        margin: 0 0 0.75rem 0;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-  
-      .cast-scroll-grid {
-        display: flex;
-        gap: 1rem;
-        overflow-x: auto;
-        padding-bottom: 0.75rem;
+
+      .avatar-fallback {
         width: 100%;
-        -webkit-overflow-scrolling: touch;
-  
-        &::-webkit-scrollbar {
-          height: 6px;
-        }
-        &::-webkit-scrollbar-thumb {
-          background: #444;
-          border-radius: 3px;
-        }
-      }
-  
-      .cast-member-node {
+        height: 100%;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        min-width: 190px;
-        max-width: 220px;
-        background: #222;
-        padding: 8px 12px;
-        border-radius: 30px;
-        flex-shrink: 0; /* Fixed: Blocks grid layout components from crushing nodes */
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        background: #1e293b;
       }
-  
-      .cast-avatar-circle {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
+    }
+
+    .cast-member-node:hover .cast-avatar-circle {
+      transform: scale(1.08);
+      /* Avatar grows within active node */
+    }
+
+    .cast-meta-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+
+      .actor-real-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #ffffff;
+        white-space: nowrap;
         overflow: hidden;
-        flex-shrink: 0;
-        background-color: #333;
-  
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-  
-        .avatar-fallback {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 0.9rem;
-          color: var(--text-muted);
-          background: #2a2a2a;
-        }
+        text-overflow: ellipsis;
       }
-  
-      .cast-meta-info {
-        display: flex;
-        flex-direction: column;
+
+      .actor-character-name {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        white-space: nowrap;
         overflow: hidden;
-        min-width: 0; /* Fixed: Allows textual nodes within nested cards to truncate smoothly */
-  
-        .actor-real-name {
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: #ffffff;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .actor-character-name {
-          font-size: 0.75rem;
-          color: var(--text-muted);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+        text-overflow: ellipsis;
+        margin-top: 1px;
       }
     }
   }
-  
-  /* Responsive Structural Breakpoints */
-  @media (max-width: 768px) {
-    .movie-detail-card {
-      
-      .movie-backdrop-hero {
-        height: 200px;
-      }
-  
-      .movie-main-content {
-        grid-template-columns: 1fr; /* Switch to single-column layout stack automatically */
-        padding: 1.5rem;
-        gap: 1.5rem;
-      }
-  
-      .movie-poster-frame {
-        max-width: 180px;
-        margin: 0 auto;
-      }
-  
-      .movie-header-group .movie-display-title {
-        font-size: 1.75rem;
-      }
+}
+
+/* --- Responsive Structural Breakpoints --- */
+
+/* Tablets and Medium Displays */
+@media (max-width: 900px) {
+  .movie-detail-card {
+    margin: 2rem 1rem;
+
+    .movie-main-content {
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 2rem;
+      padding: 3rem 2rem 2rem 2rem;
+    }
+
+    .movie-header-group .movie-display-title {
+      font-size: 2.25rem;
     }
   }
-  
+}
+
+/* Small Smartphone/Mobile Screens */
+@media (max-width: 640px) {
+  .movie-detail-card {
+    border-radius: 16px;
+    margin: 1rem 0.5rem;
+
+    .movie-main-content {
+      grid-template-columns: 1fr;
+      /* Switch to single-column layout stack automatically */
+      padding: 2rem 1.25rem 1.5rem 1.25rem;
+      gap: 1.75rem;
+    }
+
+    /* Reset 3D skew properties for absolute readability on small touch screens */
+    .movie-poster-frame {
+      max-width: 200px;
+      margin: 0 auto;
+      transform: none;
+
+      &:hover {
+        transform: scale(1.03);
+      }
+    }
+
+    .movie-header-group {
+      text-align: center;
+
+      .movie-display-title {
+        font-size: 2rem;
+      }
+    }
+
+    .movie-stats-strip,
+    .movie-genres-row {
+      justify-content: center;
+      /* Balanced symmetry grid for mobile viewport scales */
+    }
+
+    .movie-synopsis,
+    .movie-cast-section {
+      h3 {
+        text-align: center;
+      }
+    }
+
+    .movie-cast-section .cast-scroll-grid {
+      padding-bottom: 8px;
+    }
+  }
+}

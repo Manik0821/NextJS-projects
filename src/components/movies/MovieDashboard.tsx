@@ -1,6 +1,6 @@
 'use client';
 
-import SearchBar from '@/lib/Filter-list-dropdown/SearchBar';
+import SearchBar from './components/searchBar/searchBar';
 import MovieDetailsCard from './components/DetailsCard/MovieDetailsCard';
 import MovieRecommendations from './components/Reccomendation/MovieReccomendations';
 import AISummary from '../ai/AISummary';
@@ -10,6 +10,7 @@ import { useMovieStore } from '@/lib/store/MovieStore';
 import { useMovieSearch } from './hooks/useMovieSearch';
 import { useMovieSelection } from './hooks/useMovieSelection';
 import { useMovieDetails } from './hooks/useMoviedetails';
+import LoadingState from './components/LoadingState/LoadingState';
 
 export default function MovieSearchDashboard() {
   const {
@@ -60,9 +61,7 @@ export default function MovieSearchDashboard() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="dashboard-status-text">
-          Loading Search Data...
-        </div>
+        <LoadingState />
       )}
 
       {/* Error */}

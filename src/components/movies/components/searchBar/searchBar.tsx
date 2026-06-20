@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react'
-import './SearchBar.css'
+import './searchBar.css'
 
 export type Option = {
   label: string;

@@ -1,0 +1,354 @@
+.search-bar-container {
+  /* Layout variables with fluid tablet scaling */
+  --search-width: 100%;
+  --search-max-width: 100%; 
+  --search-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --search-input-height: 54px; 
+  --search-input-padding: 12px 52px 12px 26px; 
+  --search-font-size: 1.05rem; 
+  min-width: 45rem;
+  
+  /* Vibrant, energetic color palette */
+  --color-primary: #0066cc;
+  --color-primary-rgb: 0, 102, 204;
+  --color-text: #1f2937;
+  
+  /* PREMIUM IDLE LOOK: Sophisticated modern variables */
+  --color-idle-bg: #f8fafc; /* Soft off-white canvas so it feels designed, not empty */
+  --color-idle-border: #e2e8f0;
+  --gradient-premium: linear-gradient(135deg, #0066cc, #c084fc, #6366f1);
+  
+  /* Custom high-performance spring-easing curves */
+  --ease-spring-1: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-2: cubic-bezier(0.5, 1.75, 0.55, 1);
+  --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+
+  position: relative;
+  width: var(--search-width);
+  max-width: var(--search-max-width);
+  font-family: var(--search-font);
+  box-sizing: border-box;
+  margin: 2rem auto;
+  transition: max-width 0.4s var(--ease-fluid);
+
+  & *, & *::before, & *::after {
+    box-sizing: border-box;
+  }
+
+  /* Disabled state styling block */
+  &.is-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    transform: scale(0.98);
+    transition: all 0.3s ease;
+  }
+
+  /* Input container wrapper row */
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    perspective: 1000px;
+    border-radius: 9999px;
+    padding: 2px; /* Creates clean breathing room for the gradient line mask */
+    background: var(--color-idle-border);
+    transition: background 0.3s var(--ease-fluid);
+
+    /* Sleek gradient border reveal on container hover */
+    &:hover {
+      background: var(--gradient-premium);
+    }
+    
+    /* Lock the premium gradient on focus */
+    &:focus-within {
+      background: var(--gradient-premium);
+    }
+  }
+
+  /* Fluid fully rounded corner profile layout */
+  .search-main-input {
+    width: 100%;
+    min-height: var(--search-input-height);
+    padding: var(--search-input-padding);
+    font-size: var(--search-font-size);
+    border: none; /* Handled gracefully by the parent wrapper line */
+    border-radius: 9999px; 
+    background-color: var(--color-idle-bg);
+    color: var(--color-text);
+    outline: none;
+    font-weight: 500;
+    
+    /* Ultra responsive transition mapping */
+    transition: 
+      box-shadow 0.3s var(--ease-spring-1), 
+      background-color 0.3s var(--ease-fluid),
+      transform 0.2s var(--ease-fluid);
+    -webkit-appearance: none;
+
+    &::placeholder {
+      color: #64748b;
+      font-weight: 400;
+      transition: transform 0.25s var(--ease-fluid), opacity 0.2s ease;
+    }
+
+    /* Soft scale push down when clicking down on the canvas */
+    &:active {
+      transform: scale(0.995);
+    }
+
+    /* Interactive state morphs */
+    &:focus {
+      background-color: #ffffff;
+      /* Multi-layered dynamic glowing aura */
+      box-shadow: 
+        0 12px 30px -4px rgba(var(--color-primary-rgb), 0.2),
+        0 4px 12px -2px rgba(var(--color-primary-rgb), 0.1);
+      
+      &::placeholder {
+        opacity: 0.5;
+        transform: translateX(6px);
+      }
+    }
+  }
+
+  /* Action button to flush text values */
+  .search-clear-btn {
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    will-change: transform, background-color, color;
+    transition: 
+      color 0.2s ease, 
+      background-color 0.2s ease, 
+      transform 0.3s var(--ease-spring-1);
+
+    /* Playful magnetic hover effect */
+    &:hover {
+      color: #0f172a;
+      background-color: #e2e8f0;
+      transform: scale(1.15) rotate(90deg);
+    }
+
+    &:active {
+      transform: scale(0.9) rotate(90deg);
+    }
+  }
+
+  /* Results Dropdown Container with Kinetic Spring Reveal */
+  .search-results-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    width: 100%;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 22px; 
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 
+      0 30px 60px -15px rgba(15, 23, 42, 0.18),
+      0 12px 24px -10px rgba(15, 23, 42, 0.08);
+    z-index: 100;
+    overflow: hidden;
+    
+    /* Hardware accelerated spring-elastic entry */
+    animation: menuSpringReveal 0.45s var(--ease-spring-2) forwards;
+    transform-origin: top center;
+    will-change: transform, opacity;
+  }
+
+  .search-options-list {
+    max-height: clamp(200px, 45vh, 400px); 
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px; 
+    
+    /* Cascading staggered entrance animations for child list rows */
+    .search-option-item {
+      animation: rowEntrance 0.35s var(--ease-fluid) both;
+      
+      /* Pure CSS Staggering loops for the first 5 elements */
+      &:nth-child(1) { animation-delay: 0.03s; }
+      &:nth-child(2) { animation-delay: 0.06s; }
+      &:nth-child(3) { animation-delay: 0.09s; }
+      &:nth-child(4) { animation-delay: 0.12s; }
+      &:nth-child(5) { animation-delay: 0.15s; }
+    }
+  }
+
+  /* List component row interactions */
+  .search-option-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 52px; 
+    padding: 12px 20px;
+    font-size: 0.98rem;
+    cursor: pointer;
+    color: #334155;
+    border-radius: 14px; 
+    will-change: transform, background-color;
+    transition: 
+      background-color 0.2s var(--ease-fluid), 
+      color 0.2s var(--ease-fluid), 
+      transform 0.2s var(--ease-fluid);
+
+    /* Kinetic push interaction on hover/selection */
+    &:hover, &.is-focused {
+      background-color: #f0f7ff; 
+      color: var(--color-primary);
+      transform: translateX(6px);
+      outline: none;
+    }
+    
+    &:active {
+      transform: translateX(4px) scale(0.995);
+    }
+
+    .option-main-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-grow: 1;
+      min-width: 0;
+    }
+  }
+
+  /* Badge labels decoration markup */
+  .option-meta-tags {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .meta-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #f1f5f9;
+    color: #64748b;
+    padding: 4px 10px;
+    border-radius: 8px; 
+    white-space: nowrap;
+    transition: 
+      background-color 0.2s var(--ease-fluid), 
+      color 0.2s var(--ease-fluid), 
+      transform 0.2s var(--ease-spring-1);
+  }
+  
+  /* Pop effect on active badge sub-elements */
+  .search-option-item:hover .meta-badge,
+  .search-option-item.is-focused .meta-badge {
+    background-color: #e0f2fe;
+    color: var(--color-primary);
+    transform: scale(1.05);
+  }
+}
+
+/* Kinetic Spring-Elastic Dropdown Menu reveal */
+@keyframes menuSpringReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Smooth slide up & fade cascade for rows */
+@keyframes rowEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Viewport Breakpoints Response --- */
+
+/* Tablets and Medium Displays */
+@media (max-width: 768px) {
+  .search-bar-container {
+    --search-max-width: 90%;
+    --search-input-height: 48px;
+    --search-input-padding: 10px 46px 10px 20px;
+    margin: 1.5rem auto;
+    min-width: 600px;
+  }
+}
+
+/* Small Smartphone/Mobile Screens */
+@media (max-width: 480px) {
+  .search-bar-container {
+    --search-max-width: 100%; 
+    --search-input-height: 46px; 
+    --search-input-padding: 8px 42px 8px 18px; 
+    --search-font-size: 1rem;
+    margin: 0.75rem auto;
+    min-width: 300px;
+    
+    .search-input-wrapper {
+      padding: 1.5px; /* Thinner border mask track for small mobile frames */
+    }
+
+    .search-clear-btn {
+      right: 14px; 
+      padding: 6px;
+    }
+
+    .search-results-menu {
+      border-radius: 16px; 
+      top: calc(100% + 8px);
+    }
+
+    .search-options-list {
+      max-height: clamp(160px, 42vh, 300px); 
+      padding: 6px;
+    }
+
+    .search-option-item {
+      min-height: 44px; 
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      gap: 10px;
+      border-radius: 12px;
+      
+      &:hover, &.is-focused {
+        transform: translateX(3px);
+      }
+    }
+
+    .meta-badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+    }
+  }
+}
+
+/* Landscape orientation protection on short windows */
+@media (max-height: 500px) and (orientation: landscape) {
+  .search-bar-container {
+    margin: 0.5rem auto;
+    
+    .search-options-list {
+      max-height: 130px; 
+    }
+  }
+}
