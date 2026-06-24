@@ -138,10 +138,12 @@ export default function WeatherPage() {
         {aiCity && !loading && (
           <AISummary
             title="Weather Insights"
-            prompt="Give some interesting facts about the climate and weather patterns."
-            args={[aiCity]}
-            triggerKey={aiCity} // Complete reference safety lock!
+            prompt="Next-JS/generate/Weather_Insights"
+            triggerKey={aiCity}
             wordLimit={100}
+            variables={{
+              city: aiCity,
+            }}
           />
         )}
 

@@ -17,7 +17,7 @@ export default function MovieSearchDashboard() {
     currMovie,
     currMovieId,
     release_year,
-    media_type, 
+    media_type,
   } = useMovieStore();
 
   const {
@@ -38,7 +38,7 @@ export default function MovieSearchDashboard() {
     handleDropdownSelect,
     handleRecommendationSelect,
   } = useMovieSelection(
-    sortedOptions, 
+    sortedOptions,
     setSearchQuery
   );
 
@@ -92,10 +92,15 @@ export default function MovieSearchDashboard() {
         <div className="movie-ai-section">
           <AISummary
             title={`Cinematic Analytics: "${currMovie}"`}
-            prompt={`You are an cinematic summary agent Analyze the historical relevance, themes, tropes, and public reception of ${media_type === "tv" ? "tv series" : "movie"} ${currMovie} from ${release_year}. Outline what makes these films/series distinct. Make sure to only give the relevant data about the movie mentioned with release date`}
-            args={[currMovie, movieDetails]}
+            prompt="Next-JS/generate/Cine_Summarizer"
             triggerKey={currMovieId}
             wordLimit={100}
+            variables={{
+              media_type: movieDetails?.media_type ?? "movie",
+              title: currMovie,
+              release_year: movieDetails?.release_date?.split("-")[0] ?? "",
+              fallback_overview: movieDetails?.overview ?? "",
+            }}
           />
         </div>
       )}

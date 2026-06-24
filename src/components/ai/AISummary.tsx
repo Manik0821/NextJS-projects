@@ -11,7 +11,7 @@ import {
 
 interface AISummaryProps {
   prompt: string;
-  args?: string[];
+  variables?: Record<string, any>;
   wordLimit?: number;
   title?: string;
   className?: string;
@@ -20,7 +20,7 @@ interface AISummaryProps {
 
 export default function AISummary({
   prompt,
-  args = [],
+  variables = {},
   wordLimit = 100,
   title = "Summary",
   className = "",
@@ -41,11 +41,10 @@ export default function AISummary({
   const requestIdRef = useRef(0);
 
   useEffect(() => {
-    if (!triggerKey) {
+    if (!triggerKey || !prompt) {
       return;
     }
 
-    // Already cached
     if (summaryCache.current[triggerKey]) {
       setSummary(summaryCache.current[triggerKey]);
       setLoading(false);
@@ -54,9 +53,7 @@ export default function AISummary({
 
     setLoading(true);
 
-    // Debounce slightly
     const timer = setTimeout(async () => {
-      // Cancel previous request
       abortControllerRef.current?.abort();
 
       const controller = new AbortController();
@@ -65,42 +62,38 @@ export default function AISummary({
       const currentRequestId = ++requestIdRef.current;
 
       try {
-        const finalPrompt = `
-${prompt}
 
-Arguments:
-${args.join(", ")}
 
-Please keep the response within approximately ${wordLimit} words.
-`;
-
-        const response = await fetch(
-          "/api/ai/ai-generate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+        const response = await fetch("/api/ai/ai-generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            systemPrompt: prompt,
+            variables: {
+              ...variables,
+              wordLimit,
             },
-            body: JSON.stringify({
-              prompt: finalPrompt,
-            }),
-            signal: controller.signal,
-          }
-        );
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to generate summary");
+        }
 
         const data = await response.json();
 
-        // Ignore stale responses
-        if (
-          currentRequestId !== requestIdRef.current
-        ) {
+        if (currentRequestId !== requestIdRef.current) {
           return;
         }
 
-        summaryCache.current[triggerKey] =
-          data.text;
+        const generatedText = data?.text || data?.response || "";
+        summaryCache.current[triggerKey] = generatedText;
 
-        setSummary(data.text);
+        setSummary(generatedText);
       } catch (error: any) {
         if (error.name === "AbortError") {
           return;
@@ -112,9 +105,7 @@ Please keep the response within approximately ${wordLimit} words.
           "Failed to generate insights. Please try searching again."
         );
       } finally {
-        if (
-          currentRequestId === requestIdRef.current
-        ) {
+        if (currentRequestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -123,7 +114,7 @@ Please keep the response within approximately ${wordLimit} words.
     return () => {
       clearTimeout(timer);
     };
-  }, [triggerKey]);
+  }, [prompt, wordLimit, triggerKey, JSON.stringify(variables)]);
 
   const handleCopy = async () => {
     if (!summary || loading) return;
