@@ -12,6 +12,7 @@ export const TitleDisplay = () => {
     // Fixed the typo: changed 'ai-transscript' to 'ai-transcript'
     const isHidden = pathname.toLowerCase().includes('ai-transcript') 
     || pathname.toLowerCase().includes('weather') 
+    || pathname.toLowerCase().includes('scheduler');
     // || pathname.toLowerCase().includes('movie');
 
     useEffect(() => {

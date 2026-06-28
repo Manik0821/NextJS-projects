@@ -11,6 +11,7 @@ const getFeatureTag = (path: string): string => {
   if (path.includes('poll')) return 'Social';
   if (path.includes('ai')) return 'AI Assistant';
   if (path.includes('carousel')) return 'UI Component';
+  if (path.includes('schedler')) return 'Task Scheduler';
   return 'App';
 };
 

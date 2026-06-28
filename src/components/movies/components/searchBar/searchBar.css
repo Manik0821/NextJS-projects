@@ -28,7 +28,7 @@
   max-width: var(--search-max-width);
   font-family: var(--search-font);
   box-sizing: border-box;
-  margin: 2rem auto;
+  margin: 0rem auto;
   transition: max-width 0.4s var(--ease-fluid);
 
   & *, & *::before, & *::after {
@@ -289,7 +289,7 @@
     --search-max-width: 90%;
     --search-input-height: 48px;
     --search-input-padding: 10px 46px 10px 20px;
-    margin: 1.5rem auto;
+    margin: 0rem auto;
     min-width: 600px;
   }
 }
