@@ -134,13 +134,13 @@ export async function GET(
         );
       }
   
-      console.log("========== TASK ==========");
-      console.log("_id:", task._id.toString());
-      console.log("title:", task.title);
-      console.log("dateKey:", task.dateKey);
-      console.log("repeat:", task.repeat);
-      console.log("excludedDates:", task.excludedDates);
-      console.log("==========================");
+      // console.log("========== TASK ==========");
+      // console.log("_id:", task._id.toString());
+      // console.log("title:", task.title);
+      // console.log("dateKey:", task.dateKey);
+      // console.log("repeat:", task.repeat);
+      // console.log("excludedDates:", task.excludedDates);
+      // console.log("==========================");
   
       return NextResponse.json(
         {

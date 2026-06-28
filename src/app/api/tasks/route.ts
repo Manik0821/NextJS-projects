@@ -204,32 +204,32 @@ export async function GET(req: NextRequest) {
       rangeStart,
       rangeEnd
     );
-    console.log("========== TASKS GET DEBUG ==========");
-console.log("range:", rangeStart, rangeEnd);
+//     console.log("========== TASKS GET DEBUG ==========");
+// console.log("range:", rangeStart, rangeEnd);
 
-console.log(
-  "raw tasks:",
-  tasks.map((task: any) => ({
-    id: String(task._id),
-    title: task.title,
-    dateKey: task.dateKey,
-    repeat: task.repeat,
-    excludedDates: task.excludedDates,
-  }))
-);
+// console.log(
+//   "raw tasks:",
+//   tasks.map((task: any) => ({
+//     id: String(task._id),
+//     title: task.title,
+//     dateKey: task.dateKey,
+//     repeat: task.repeat,
+//     excludedDates: task.excludedDates,
+//   }))
+// );
 
-console.log(
-  "expanded tasks:",
-  data.map((task: any) => ({
-    id: task.id,
-    originalTaskId: task.originalTaskId,
-    title: task.title,
-    dateKey: task.dateKey,
-    excludedDates: task.excludedDates,
-  }))
-);
+// console.log(
+//   "expanded tasks:",
+//   data.map((task: any) => ({
+//     id: task.id,
+//     originalTaskId: task.originalTaskId,
+//     title: task.title,
+//     dateKey: task.dateKey,
+//     excludedDates: task.excludedDates,
+//   }))
+// );
 
-console.log("=====================================");
+// console.log("=====================================");
 
     return NextResponse.json({
       success: true,

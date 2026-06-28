@@ -24,6 +24,7 @@ import {
 } from "../utils/month";
 
 import { formatDate } from "../utils/date";
+import AISchedulerButton from "./AISchedulerButton";
 
 export default function Scheduler() {
     const [selectedDate, setSelectedDate] =
@@ -177,6 +178,10 @@ export default function Scheduler() {
                 />
 
                 <TaskDetailsDrawer />
+                <AISchedulerButton
+  selectedDate={selectedDate}
+  onDone={refreshTasks}
+/>
 
             </div>
         </SchedulerProvider>
