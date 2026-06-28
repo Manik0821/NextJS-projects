@@ -3,8 +3,7 @@
 import { CalendarEvent, Task } from "../types/task";
 import { getStartMinutes, getEndMinutes } from "./time";
 
-const TOP_PIXELS_PER_MINUTE = 2;
-const HEIGHT_PIXELS_PER_MINUTE = 1;
+const PIXELS_PER_MINUTE = 2;
 
 function overlaps(a: Task, b: Task) {
   return (
@@ -59,12 +58,10 @@ export function buildCalendarEvents(
     events.push({
       task,
 
-      // Correct vertical position
-      top: start * TOP_PIXELS_PER_MINUTE,
-
-      // Smaller event height
+      // Match the day-view time scale so event height fills the slot correctly
+      top: start * PIXELS_PER_MINUTE,
       height: Math.max(
-        (end - start) * HEIGHT_PIXELS_PER_MINUTE,
+        (end - start) * PIXELS_PER_MINUTE,
         20
       ),
 

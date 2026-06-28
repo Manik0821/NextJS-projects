@@ -314,7 +314,7 @@ export default function TaskForm({
           </select>
         </FormField>
       </div>
-            {/* ============================
+      {/* ============================
           Repeat Task
       ============================= */}
       <FormField label="Repeat">
@@ -359,9 +359,9 @@ export default function TaskForm({
                       ...form.repeat,
                       frequency:
                         e.target.value as
-                          | "daily"
-                          | "weekly"
-                          | "monthly",
+                        | "daily"
+                        | "weekly"
+                        | "monthly",
                     })
                   }
                   className="w-full rounded-lg border border-slate-200 p-3"
@@ -405,12 +405,12 @@ export default function TaskForm({
 
                   <span className="text-sm text-slate-600">
                     {form.repeat.frequency ===
-                    "daily"
+                      "daily"
                       ? "day(s)"
                       : form.repeat.frequency ===
                         "weekly"
-                      ? "week(s)"
-                      : "month(s)"}
+                        ? "week(s)"
+                        : "month(s)"}
                   </span>
 
                 </div>

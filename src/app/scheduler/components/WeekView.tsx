@@ -111,13 +111,13 @@ export default function WeekView({
     const firstTaskTop =
       selectedDayEvents.length > 0
         ? Math.max(
-            Math.min(
-              ...selectedDayEvents.map(
-                (event) => event.top
-              )
-            ) - 120,
-            0
-          )
+          Math.min(
+            ...selectedDayEvents.map(
+              (event) => event.top
+            )
+          ) - 120,
+          0
+        )
         : 0;
 
     container.scrollTo({
@@ -168,15 +168,13 @@ export default function WeekView({
                 handleDayClick(day);
               }
             }}
-            className={`${styles.weekColumn} ${
-              index === 0
+            className={`${styles.weekColumn} ${index === 0
                 ? styles.weekColumnFirst
                 : ""
-            } ${
-              isSelected
+              } ${isSelected
                 ? styles.weekColumnSelected ?? ""
                 : ""
-            }`}
+              }`}
           >
             <div
               className={
@@ -227,11 +225,10 @@ export default function WeekView({
                     {hour === 0
                       ? "12 AM"
                       : hour > 12
-                      ? `${hour - 12} PM`
-                      : `${hour} ${
-                          hour === 12
-                            ? "PM"
-                            : "AM"
+                        ? `${hour - 12} PM`
+                        : `${hour} ${hour === 12
+                          ? "PM"
+                          : "AM"
                         }`}
                   </span>
                 </div>

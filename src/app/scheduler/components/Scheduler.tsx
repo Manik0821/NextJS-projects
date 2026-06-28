@@ -179,9 +179,9 @@ export default function Scheduler() {
 
                 <TaskDetailsDrawer />
                 <AISchedulerButton
-  selectedDate={selectedDate}
-  onDone={refreshTasks}
-/>
+                    selectedDate={selectedDate}
+                    onDone={refreshTasks}
+                />
 
             </div>
         </SchedulerProvider>

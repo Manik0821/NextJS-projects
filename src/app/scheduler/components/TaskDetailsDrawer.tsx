@@ -64,9 +64,9 @@ export default function TaskDetailsDrawer() {
   }
 
   const taskId =
-  selectedTask.originalTaskId ??
-  selectedTask._id ??
-  selectedTask.id;
+    selectedTask.originalTaskId ??
+    selectedTask._id ??
+    selectedTask.id;
 
   async function saveTask() {
     if (!taskId) return;
@@ -99,16 +99,16 @@ export default function TaskDetailsDrawer() {
 
   async function removeTask() {
     if (!taskId) return;
-  
+
     const isRecurring =
       selectedTask?.isRecurringOccurrence ||
       selectedTask?.repeat?.enabled;
-  
+
     if (isRecurring) {
       const deleteOnlyOne = window.confirm(
         "Delete only this occurrence?\n\nOK = delete only this event\nCancel = delete entire series"
       );
-  
+
       await deleteTask(taskId, {
         scope: deleteOnlyOne
           ? "occurrence"
@@ -120,12 +120,12 @@ export default function TaskDetailsDrawer() {
       if (!window.confirm("Delete this task?")) {
         return;
       }
-  
+
       await deleteTask(taskId, {
         scope: "series",
       });
     }
-  
+
     await refreshTasks();
     closeDetails();
   }

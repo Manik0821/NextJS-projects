@@ -15,7 +15,7 @@ export default function TimelineGrid() {
         CRITICAL ISOLATION CANVAS: 
         Ensures the background markings perfectly mirror your calculated mathematical positions
       */}
-      <div 
+      <div
         className="w-full relative"
         style={{ height: `${totalCanvasHeight}px` }}
       >
@@ -36,20 +36,20 @@ export default function TimelineGrid() {
               <div className="w-full border-t border-slate-200/80" />
 
               {/* 15-Minute Quarter Dash Marker Line */}
-              <div 
-                className="absolute left-0 right-0 border-t border-dashed border-slate-100/60" 
+              <div
+                className="absolute left-0 right-0 border-t border-dashed border-slate-100/60"
                 style={{ top: "25%" }}
               />
 
               {/* 30-Minute Half-Hour Dash Marker Line */}
-              <div 
-                className="absolute left-0 right-0 border-t border-dashed border-slate-100/90" 
+              <div
+                className="absolute left-0 right-0 border-t border-dashed border-slate-100/90"
                 style={{ top: "50%" }}
               />
 
               {/* 45-Minute Quarter Dash Marker Line */}
-              <div 
-                className="absolute left-0 right-0 border-t border-dashed border-slate-100/60" 
+              <div
+                className="absolute left-0 right-0 border-t border-dashed border-slate-100/60"
                 style={{ top: "75%" }}
               />
             </div>
@@ -57,7 +57,7 @@ export default function TimelineGrid() {
         })}
 
         {/* Final trailing row line bounding the bottom border of the 23rd hour slot */}
-        <div 
+        <div
           className="absolute left-0 right-0 border-t border-slate-200/80"
           style={{ top: `${totalCanvasHeight - 1}px` }}
         />

@@ -11,10 +11,10 @@ export default function TimeColumn() {
     <div
       className="sticky left-0 z-30 bg-white border-r border-slate-200 select-none shrink-0"
       style={{
-        width: "64px", 
+        width: "64px",
       }}
     >
-      <div 
+      <div
         className="w-full relative"
         style={{ height: `${HOURS_PER_DAY * HOUR_HEIGHT}px` }}
       >
@@ -42,7 +42,7 @@ export default function TimeColumn() {
                   {displayHour} {amPmSuffix}
                 </span>
               )}
-              
+
               {/* Refined clean interior guide anchor line matching the companion timeline grid */}
               <div className="w-full border-t border-slate-100/70" />
             </div>

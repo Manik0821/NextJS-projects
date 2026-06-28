@@ -24,7 +24,7 @@ export default function SchedulerHeader({
   return (
     <header className={styles.headerWrapper}>
       <div className={styles.headerLayoutGrid}>
-        
+
         {/* Element 1: Date Info (Top Left in Grid, First on Line) */}
         <div className={styles.boxDate}>
           <h2 className={styles.dateTitle}>
