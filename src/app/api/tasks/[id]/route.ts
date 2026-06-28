@@ -100,63 +100,74 @@ function normalizeRepeat(
 ---------------------------------------- */
 
 export async function GET(
-  request: NextRequest,
-  { params }: RouteContext
-) {
-  try {
-    await connectDB();
-
-    const { id } = await params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    request: NextRequest,
+    { params }: RouteContext
+  ) {
+    try {
+      await connectDB();
+  
+      const { id } = await params;
+  
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid task id.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+  
+      const task = await Task.findById(id);
+  
+      if (!task) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Task not found.",
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+  
+      console.log("========== TASK ==========");
+      console.log("_id:", task._id.toString());
+      console.log("title:", task.title);
+      console.log("dateKey:", task.dateKey);
+      console.log("repeat:", task.repeat);
+      console.log("excludedDates:", task.excludedDates);
+      console.log("==========================");
+  
+      return NextResponse.json(
+        {
+          success: true,
+          data: task,
+        },
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.error(
+        "GET /api/tasks/:id error:",
+        error
+      );
+  
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid task id.",
+          message: "Unable to fetch task.",
         },
         {
-          status: 400,
+          status: 500,
         }
       );
     }
-
-    const task = await Task.findById(id);
-
-    if (!task) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Task not found.",
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: task,
-      },
-      {
-        status: 200,
-      }
-    );
-  } catch (error) {
-    console.error("GET /api/tasks/:id error:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Unable to fetch task.",
-      },
-      {
-        status: 500,
-      }
-    );
   }
-}
 
 /* ----------------------------------------
    PATCH /api/tasks/:id
@@ -307,62 +318,121 @@ export async function PATCH(
 ---------------------------------------- */
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: RouteContext
-) {
-  try {
-    await connectDB();
-
-    const { id } = await params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    request: NextRequest,
+    { params }: RouteContext
+  ) {
+    try {
+      await connectDB();
+  
+      const { id } = await params;
+  
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid task id.",
+          },
+          { status: 400 }
+        );
+      }
+  
+      const { searchParams } = new URL(request.url);
+  
+      const scope =
+        searchParams.get("scope") ?? "series";
+  
+      const occurrenceDate =
+        searchParams.get("occurrenceDate");
+  
+      const objectId =
+        new mongoose.Types.ObjectId(id);
+  
+      if (
+        scope === "occurrence" &&
+        occurrenceDate
+      ) {
+        const dateKey =
+          occurrenceDate.substring(0, 10);
+  
+        const result =
+          await Task.collection.updateOne(
+            {
+              _id: objectId,
+            },
+            {
+              $addToSet: {
+                excludedDates: dateKey,
+              },
+            }
+          );
+  
+        if (result.matchedCount === 0) {
+          return NextResponse.json(
+            {
+              success: false,
+              message: "Task not found.",
+            },
+            { status: 404 }
+          );
+        }
+  
+        const updatedTask =
+          await Task.collection.findOne({
+            _id: objectId,
+          });
+  
+        return NextResponse.json(
+          {
+            success: true,
+            message:
+              "Occurrence deleted successfully.",
+            deletedOccurrence: dateKey,
+            excludedDates:
+              updatedTask?.excludedDates ?? [],
+          },
+          { status: 200 }
+        );
+      }
+  
+      const result =
+        await Task.collection.deleteOne({
+          _id: objectId,
+        });
+  
+      if (result.deletedCount === 0) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Task not found.",
+          },
+          { status: 404 }
+        );
+      }
+  
+      return NextResponse.json(
+        {
+          success: true,
+          message:
+            "Task series deleted successfully.",
+          deletedId: id,
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error(
+        "DELETE /api/tasks/:id error:",
+        error
+      );
+  
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid task id.",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to delete task.",
         },
-        {
-          status: 400,
-        }
+        { status: 500 }
       );
     }
-
-    const deleted =
-      await Task.findByIdAndDelete(id);
-
-    if (!deleted) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Task not found.",
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message:
-          "Task deleted successfully.",
-      },
-      {
-        status: 200,
-      }
-    );
-  } catch (error) {
-    console.error("DELETE /api/tasks/:id error:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Unable to delete task.",
-      },
-      {
-        status: 500,
-      }
-    );
   }
-}

@@ -113,7 +113,11 @@ function normalizeTask(task: any, occurrenceDateKey?: string) {
   };
 }
 
-function expandTasks(tasks: any[], startDate: string, endDate: string) {
+function expandTasks(
+  tasks: any[],
+  startDate: string,
+  endDate: string
+) {
   const output: any[] = [];
 
   for (const task of tasks) {
@@ -122,8 +126,17 @@ function expandTasks(tasks: any[], startDate: string, endDate: string) {
     const taskDateKey =
       task.dateKey ?? formatDateKey(new Date(task.date));
 
+    const excludedDates = Array.isArray(task.excludedDates)
+      ? task.excludedDates.map((d: string) =>
+          d.substring(0, 10)
+        )
+      : [];
+
     if (!repeat.enabled) {
-      if (taskDateKey >= startDate && taskDateKey <= endDate) {
+      if (
+        taskDateKey >= startDate &&
+        taskDateKey <= endDate
+      ) {
         output.push(normalizeTask(task));
       }
 
@@ -131,22 +144,28 @@ function expandTasks(tasks: any[], startDate: string, endDate: string) {
     }
 
     let currentDateKey = taskDateKey;
-
     const untilDateKey = repeat.until || endDate;
 
     while (
       currentDateKey <= endDate &&
       currentDateKey <= untilDateKey
     ) {
-      if (currentDateKey >= startDate) {
+      if (
+        currentDateKey >= startDate &&
+        !excludedDates.includes(currentDateKey)
+      ) {
         output.push(normalizeTask(task, currentDateKey));
       }
 
-      currentDateKey = addDate(
+      const nextDateKey = addDate(
         currentDateKey,
         repeat.frequency,
         repeat.interval
       );
+
+      if (nextDateKey === currentDateKey) break;
+
+      currentDateKey = nextDateKey;
     }
   }
 
@@ -176,13 +195,41 @@ export async function GET(req: NextRequest) {
     const rangeEnd =
       endDate ?? rangeStart;
 
-    const tasks = await Task.find({}).lean();
+      const tasks = await Task.collection
+      .find({})
+      .toArray();
 
     const data = expandTasks(
       tasks,
       rangeStart,
       rangeEnd
     );
+    console.log("========== TASKS GET DEBUG ==========");
+console.log("range:", rangeStart, rangeEnd);
+
+console.log(
+  "raw tasks:",
+  tasks.map((task: any) => ({
+    id: String(task._id),
+    title: task.title,
+    dateKey: task.dateKey,
+    repeat: task.repeat,
+    excludedDates: task.excludedDates,
+  }))
+);
+
+console.log(
+  "expanded tasks:",
+  data.map((task: any) => ({
+    id: task.id,
+    originalTaskId: task.originalTaskId,
+    title: task.title,
+    dateKey: task.dateKey,
+    excludedDates: task.excludedDates,
+  }))
+);
+
+console.log("=====================================");
 
     return NextResponse.json({
       success: true,

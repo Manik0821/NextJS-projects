@@ -14,29 +14,26 @@ export function useTasks({
   startDate,
   endDate,
 }: UseTasksProps) {
-  const [tasks, setTasks] = useState<
-    Task[]
-  >([]);
+  const [tasks, setTasks] =
+    useState<Task[]>([]);
 
   const [loading, setLoading] =
     useState(true);
 
-  const refreshTasks =
-    useCallback(async () => {
-      setLoading(true);
+  const refreshTasks = useCallback(async () => {
+    setLoading(true);
 
-      try {
-        const response =
-          await api.getTasks({
-            startDate,
-            endDate,
-          });
+    try {
+      const response = await api.getTasks({
+        startDate,
+        endDate,
+      });
 
-        setTasks(response.data);
-      } finally {
-        setLoading(false);
-      }
-    }, [startDate, endDate]);
+      setTasks(response.data);
+    } finally {
+      setLoading(false);
+    }
+  }, [startDate, endDate]);
 
   useEffect(() => {
     refreshTasks();
@@ -46,7 +43,6 @@ export function useTasks({
     task: Partial<Task>
   ) {
     await api.createTask(task);
-
     await refreshTasks();
   }
 
@@ -55,13 +51,17 @@ export function useTasks({
     task: Partial<Task>
   ) {
     await api.updateTask(id, task);
-
     await refreshTasks();
   }
 
-  async function deleteTask(id: string) {
-    await api.deleteTask(id);
-
+  async function deleteTask(
+    id: string,
+    options?: {
+      scope?: "occurrence" | "series";
+      occurrenceDate?: string;
+    }
+  ) {
+    await api.deleteTask(id, options);
     await refreshTasks();
   }
 

@@ -37,7 +37,11 @@ interface SchedulerContextType {
   ) => Promise<void>;
 
   deleteTask: (
-    id: string
+    id: string,
+    options?: {
+      scope?: "occurrence" | "series";
+      occurrenceDate?: string;
+    }
   ) => Promise<void>;
 
   changeDate: (date: Date) => void;
@@ -69,7 +73,11 @@ interface SchedulerProviderProps {
   ) => Promise<void>;
 
   deleteTask: (
-    id: string
+    id: string,
+    options?: {
+      scope?: "occurrence" | "series";
+      occurrenceDate?: string;
+    }
   ) => Promise<void>;
 
   changeDate: (date: Date) => void;

@@ -102,27 +102,43 @@ export default function Scheduler() {
                     onPreviousDay={() =>
                         setSelectedDate((prev) => {
                             const next = new Date(prev);
-                            next.setDate(
-                                next.getDate() - 1
-                            );
+
+                            if (view === "day") {
+                                next.setDate(next.getDate() - 1);
+                            }
+
+                            if (view === "week") {
+                                next.setDate(next.getDate() - 7);
+                            }
+
+                            if (view === "month") {
+                                next.setMonth(next.getMonth() - 1);
+                            }
+
                             return next;
                         })
                     }
                     onNextDay={() =>
                         setSelectedDate((prev) => {
                             const next = new Date(prev);
-                            next.setDate(
-                                next.getDate() + 1
-                            );
+
+                            if (view === "day") {
+                                next.setDate(next.getDate() + 1);
+                            }
+
+                            if (view === "week") {
+                                next.setDate(next.getDate() + 7);
+                            }
+
+                            if (view === "month") {
+                                next.setMonth(next.getMonth() + 1);
+                            }
+
                             return next;
                         })
                     }
-                    onToday={() =>
-                        setSelectedDate(new Date())
-                    }
-                    onAddTask={() =>
-                        setIsAddOpen(true)
-                    }
+                    onToday={() => setSelectedDate(new Date())}
+                    onAddTask={() => setIsAddOpen(true)}
                 />
 
                 <div className="flex-1 overflow-hidden">
@@ -151,14 +167,14 @@ export default function Scheduler() {
                 </div>
 
                 <AddTaskDialog
-  open={isAddOpen}
-  selectedDate={selectedDate}
-  onClose={() => setIsAddOpen(false)}
-  onCreateTask={async (task) => {
-    await createTask(task);
-    await refreshTasks();
-  }}
-/>
+                    open={isAddOpen}
+                    selectedDate={selectedDate}
+                    onClose={() => setIsAddOpen(false)}
+                    onCreateTask={async (task) => {
+                        await createTask(task);
+                        await refreshTasks();
+                    }}
+                />
 
                 <TaskDetailsDrawer />
 

@@ -89,10 +89,34 @@ export async function updateTask(
   return (await res.json()) as ApiResponse<Task>;
 }
 
-export async function deleteTask(id: string) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
-  });
+export async function deleteTask(
+  id: string,
+  options?: {
+    scope?: "occurrence" | "series";
+    occurrenceDate?: string;
+  }
+) {
+  const params = new URLSearchParams();
+
+  if (options?.scope) {
+    params.set("scope", options.scope);
+  }
+
+  if (options?.occurrenceDate) {
+    params.set(
+      "occurrenceDate",
+      options.occurrenceDate
+    );
+  }
+
+  const query = params.toString();
+
+  const res = await fetch(
+    `${BASE_URL}/${id}${query ? `?${query}` : ""}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   return res.json();
 }

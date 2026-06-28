@@ -47,6 +47,7 @@ export interface Task {
 
   createdAt: string;
   updatedAt: string;
+  excludedDates?: string[];
 }
 
 export interface ApiResponse<T> {

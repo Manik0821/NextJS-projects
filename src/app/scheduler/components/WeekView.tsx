@@ -33,11 +33,21 @@ function formatLocalDate(value: Date | string) {
   return `${year}-${month}-${day}`;
 }
 
+function getTaskDateKey(task: Task) {
+  return (
+    task.dateKey ??
+    task.date.substring(0, 10)
+  );
+}
+
 export default function WeekView({
   date,
   tasks,
 }: Props) {
-  const week = getWeekDates(date);
+  const week = useMemo(
+    () => getWeekDates(date),
+    [date]
+  );
 
   const {
     openDetails,
@@ -48,56 +58,74 @@ export default function WeekView({
   const containerRef =
     useRef<HTMLDivElement>(null);
 
-  const selectedDayRef =
+  const selectedColumnRef =
     useRef<HTMLDivElement>(null);
+
+  const selectedDateKey =
+    formatLocalDate(date);
 
   const handleDayClick = (day: Date) => {
     changeDate(day);
     changeView("day");
   };
 
-  const selectedKey =
-    formatLocalDate(date);
-
-  const firstTaskTop = useMemo(() => {
-    const dayTasks = tasks.filter(
+  const selectedDayEvents = useMemo(() => {
+    const selectedDayTasks = tasks.filter(
       (task) =>
-        formatLocalDate(task.date) ===
-        selectedKey
+        getTaskDateKey(task) === selectedDateKey
     );
 
-    if (dayTasks.length === 0) {
-      return 0;
-    }
-
-    const events =
-      buildCalendarEvents(dayTasks);
-
-    return Math.max(
-      Math.min(
-        ...events.map((e) => e.top)
-      ) - 120,
-      0
+    return buildCalendarEvents(
+      selectedDayTasks
     );
-  }, [tasks, selectedKey]);
+  }, [tasks, selectedDateKey]);
 
   useEffect(() => {
-    if (
-      containerRef.current &&
-      selectedDayRef.current
-    ) {
-      selectedDayRef.current.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-        block: "nearest",
-      });
+    const container = containerRef.current;
+    const selectedColumn =
+      selectedColumnRef.current;
 
-      containerRef.current.scrollTo({
-        top: firstTaskTop,
-        behavior: "smooth",
-      });
+    if (!container || !selectedColumn) {
+      return;
     }
-  }, [selectedKey, firstTaskTop]);
+
+    const containerRect =
+      container.getBoundingClientRect();
+
+    const columnRect =
+      selectedColumn.getBoundingClientRect();
+
+    const currentScrollLeft =
+      container.scrollLeft;
+
+    const columnLeftInsideContainer =
+      columnRect.left -
+      containerRect.left +
+      currentScrollLeft;
+
+    const targetScrollLeft =
+      columnLeftInsideContainer -
+      container.clientWidth / 2 +
+      selectedColumn.clientWidth / 2;
+
+    const firstTaskTop =
+      selectedDayEvents.length > 0
+        ? Math.max(
+            Math.min(
+              ...selectedDayEvents.map(
+                (event) => event.top
+              )
+            ) - 120,
+            0
+          )
+        : 0;
+
+    container.scrollTo({
+      left: Math.max(targetScrollLeft, 0),
+      top: firstTaskTop,
+      behavior: "smooth",
+    });
+  }, [selectedDateKey, selectedDayEvents]);
 
   return (
     <div
@@ -105,27 +133,25 @@ export default function WeekView({
       className={`${styles.weekContainer} overflow-auto`}
     >
       {week.map((day, index) => {
-        const dayKey =
-          formatLocalDate(day);
+        const dayKey = formatLocalDate(day);
 
         const dayTasks = tasks.filter(
           (task) =>
-            formatLocalDate(task.date) ===
-            dayKey
+            getTaskDateKey(task) === dayKey
         );
 
         const events =
           buildCalendarEvents(dayTasks);
 
         const isSelected =
-          dayKey === selectedKey;
+          dayKey === selectedDateKey;
 
         return (
           <div
-            key={day.toISOString()}
+            key={dayKey}
             ref={
               isSelected
-                ? selectedDayRef
+                ? selectedColumnRef
                 : undefined
             }
             role="button"
@@ -145,6 +171,10 @@ export default function WeekView({
             className={`${styles.weekColumn} ${
               index === 0
                 ? styles.weekColumnFirst
+                : ""
+            } ${
+              isSelected
+                ? styles.weekColumnSelected ?? ""
                 : ""
             }`}
           >
@@ -209,7 +239,10 @@ export default function WeekView({
 
               {events.map((event) => (
                 <button
-                  key={event.task.id}
+                  key={
+                    event.task.id ??
+                    event.task._id
+                  }
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();

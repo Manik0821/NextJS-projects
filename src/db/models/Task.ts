@@ -51,6 +51,7 @@ export interface ITask extends Document {
 
   createdAt: Date;
   updatedAt: Date;
+  excludedDates: string[];
 }
 
 function timeToMinutes(time: string) {
@@ -150,6 +151,10 @@ const TaskSchema = new Schema<ITask>(
         type: String,
         default: "",
       },
+    },
+    excludedDates: {
+      type: [String],
+      default: [],
     },
   },
   {
