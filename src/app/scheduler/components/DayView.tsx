@@ -65,11 +65,11 @@ export default function DayView({
       className="flex h-full w-full overflow-auto bg-slate-50"
     >
       <div className="w-16 shrink-0 border-r border-slate-200 bg-white select-none">
-        <div className="h-[2880px]">
+        <div className="h-[1440px]">
           {Array.from({ length: 24 }).map((_, hour) => (
             <div
               key={hour}
-              className="flex h-[120px] items-start justify-end pr-2 pt-2 text-[10px] font-bold tracking-wider text-slate-400"
+              className="flex h-[60px] items-start justify-end pr-2 pt-2 text-[12px] font-bold tracking-[0.16em] text-slate-400"
             >
               {String(hour).padStart(2, "0")}:00
             </div>
@@ -78,11 +78,11 @@ export default function DayView({
       </div>
 
       <div className="relative min-w-0 flex-1 bg-white">
-        <div className="relative h-[2880px] w-full">
+        <div className="relative h-[1440px] w-full">
           {Array.from({ length: 24 }).map((_, hour) => (
             <div
               key={hour}
-              className="h-[120px] border-b border-slate-100"
+              className="h-[60px] border-b border-slate-100"
             />
           ))}
 
@@ -91,7 +91,7 @@ export default function DayView({
               key={event.task.id ?? event.task._id}
               type="button"
               onClick={() => openDetails(event.task)}
-              className="group absolute overflow-hidden rounded-lg border border-black/5 p-2 text-left text-white shadow-sm transition-all hover:brightness-95 hover:shadow-md"
+              className={`group absolute overflow-hidden rounded-lg border border-black/5 text-left text-white shadow-sm transition-all hover:brightness-95 hover:shadow-md ${event.height < 30 ? "p-0" : "p-2"}`}
               style={{
                 top: `${event.top}px`,
                 left: `${event.left}%`,
@@ -101,14 +101,42 @@ export default function DayView({
                   event.task.color || "#3b82f6",
               }}
             >
-              <div className="truncate text-xs font-bold leading-tight group-hover:underline">
-                {event.task.title}
-              </div>
-
-              {event.height > 45 && (
-                <div className="mt-0.5 truncate text-[10px] font-medium opacity-85">
-                  {event.task.startTime} - {event.task.endTime}
+              {event.height < 30 ? (
+                <div className="flex h-full w-full items-center justify-center overflow-visible text-[8px] font-bold leading-none tracking-wide text-white group-hover:underline">
+                  <span className=" px-0.5">
+                    {event.task.title} {event.task.startTime} - {event.task.endTime}
+                  </span>
                 </div>
+              ) : event.height < 45 ? (
+                <div className="flex h-full w-full items-center gap-1 overflow-hidden px-0.5 text-[11px] font-semibold leading-none tracking-wide text-white group-hover:underline">
+                  <span className="min-w-0 flex-1 truncate">
+                    {event.task.title}
+                  </span>
+                  <span className="shrink-0 whitespace-nowrap">
+                    {event.task.startTime} - {event.task.endTime}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <div className="truncate text-[12px] font-bold leading-[1.1] tracking-wide text-white group-hover:underline">
+                    {event.task.title}
+                  </div>
+
+                  {event.height > 60 && event.task.description ? (
+                    <>
+                    <div className="mt-0.5 truncate text-[11px] font-medium text-slate-200">
+                      {event.task.description}
+                    </div>
+                    <div className="truncate text-[12px] font-medium opacity-100">
+                      {event.task.startTime} - {event.task.endTime}
+                    </div>
+                    </>
+                  ) : (
+                    <div className="truncate text-[12px] font-medium opacity-100">
+                      {event.task.startTime} - {event.task.endTime}
+                    </div>
+                  )}
+                </>
               )}
             </button>
           ))}

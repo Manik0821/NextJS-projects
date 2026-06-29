@@ -3,7 +3,7 @@
 import { CalendarEvent, Task } from "../types/task";
 import { getStartMinutes, getEndMinutes } from "./time";
 
-const PIXELS_PER_MINUTE = 2;
+const PIXELS_PER_MINUTE = 1;
 
 function overlaps(a: Task, b: Task) {
   return (
@@ -62,7 +62,7 @@ export function buildCalendarEvents(
       top: start * PIXELS_PER_MINUTE,
       height: Math.max(
         (end - start) * PIXELS_PER_MINUTE,
-        20
+        10
       ),
 
       column,

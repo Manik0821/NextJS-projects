@@ -170,21 +170,34 @@ export function normalizeLookupFields(
   return parsed;
 }
 
-export async function findTaskIdFromLookup(
+async function findTaskIdFromLookup(
   lookup: {
     title?: string;
     date?: string;
+    startDate?: string;
+    endDate?: string;
     startTime?: string;
     endTime?: string;
   },
   fallbackDate: string,
   baseUrl: string,
-  fetchImpl: typeof fetch = fetch
+  fetchImpl: typeof fetch = fetch,
+  targetOccurrenceDate?: string
 ) {
-  const searchDate = lookup.date ?? fallbackDate;
+  const searchStart =
+    targetOccurrenceDate ??
+    lookup.date ??
+    lookup.startDate ??
+    fallbackDate;
+
+  const searchEnd =
+    targetOccurrenceDate ??
+    lookup.date ??
+    lookup.endDate ??
+    searchStart;
 
   const res = await fetchImpl(
-    `${baseUrl}/api/tasks?startDate=${searchDate}&endDate=${searchDate}`,
+    `${baseUrl}/api/tasks?startDate=${searchStart}&endDate=${searchEnd}`,
     {
       cache: "no-store",
     }
@@ -196,24 +209,52 @@ export async function findTaskIdFromLookup(
 
   const titleQuery = lookup.title?.toLowerCase().trim();
 
-  const matches = tasks.filter((task: any) => {
-    const titleMatches = titleQuery
-      ? task.title?.toLowerCase().includes(titleQuery)
+  function titleMatches(task: any) {
+    if (!titleQuery) return true;
+
+    return task.title?.toLowerCase().includes(titleQuery);
+  }
+
+  function exactTimeMatches(task: any) {
+    const startMatches = lookup.startTime
+      ? task.startTime === lookup.startTime
       : true;
 
-    const startMatches = lookup.startTime ? task.startTime === lookup.startTime : true;
+    const endMatches = lookup.endTime
+      ? task.endTime === lookup.endTime
+      : true;
 
-    const endMatches = lookup.endTime ? task.endTime === lookup.endTime : true;
+    return startMatches && endMatches;
+  }
 
-    return titleMatches && startMatches && endMatches;
+  function occurrenceMatches(task: any) {
+    return targetOccurrenceDate
+      ? (task.dateKey ?? task.date) === targetOccurrenceDate
+      : true;
+  }
+
+  let matches = tasks.filter((task: any) => {
+    return (
+      titleMatches(task) &&
+      exactTimeMatches(task) &&
+      occurrenceMatches(task)
+    );
   });
+
+  if (matches.length === 0 && titleQuery) {
+    matches = tasks.filter((task: any) => {
+      return titleMatches(task) && occurrenceMatches(task);
+    });
+  }
 
   if (matches.length === 0) {
     return {
       success: false,
       message: "No matching task found for this title/date/time.",
       searched: {
-        date: searchDate,
+        startDate: searchStart,
+        endDate: searchEnd,
+        targetOccurrenceDate,
         title: lookup.title,
         startTime: lookup.startTime,
         endTime: lookup.endTime,
@@ -378,23 +419,46 @@ export async function executeSchedulerAction(
   }
 
   if (parsed.intent === "update") {
-    if (!parsed.taskId || !parsed.task) {
-      return {
-        success: false,
-        message: "Update requires taskId and task payload.",
-      };
+  let taskId = normalizeTaskId(parsed.taskId);
+
+  if (!taskId && parsed.lookup) {
+    const lookupResult =
+      await findTaskIdFromLookup(
+        parsed.lookup,
+        parsed.lookup.date ?? selectedDate,
+        baseUrl,
+        fetchImpl
+      );
+
+    if (!lookupResult.success) {
+      return lookupResult;
     }
 
-    const res = await fetchImpl(`${baseUrl}/api/tasks/${parsed.taskId}`, {
+    taskId = lookupResult.taskId;
+  }
+
+  if (!taskId || !parsed.task) {
+    return {
+      success: false,
+      message:
+        "Update requires taskId/lookup and task payload.",
+      parsed,
+    };
+  }
+
+  const res = await fetch(
+    `${baseUrl}/api/tasks/${taskId}`,
+    {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(parsed.task),
-    });
+    }
+  );
 
-    return res.json();
-  }
+  return res.json();
+}
 
   if (parsed.intent === "delete_occurrence") {
     let taskId = normalizeTaskId(parsed.taskId);

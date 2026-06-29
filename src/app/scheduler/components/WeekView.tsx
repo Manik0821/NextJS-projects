@@ -245,9 +245,7 @@ export default function WeekView({
                     e.stopPropagation();
                     openDetails(event.task);
                   }}
-                  className={
-                    styles.weekTaskCard
-                  }
+                  className={`${styles.weekTaskCard} ${event.height < 30 ? "p-0" : "p-2"}`}
                   style={{
                     top: `${event.top}px`,
                     left: `${event.left}%`,
@@ -257,40 +255,43 @@ export default function WeekView({
                       event.task.color,
                   }}
                 >
-                  <div
-                    className={
-                      styles.weekTaskOverlay
-                    }
-                  />
-
-                  <div
-                    className={
-                      styles.weekTaskAccent
-                    }
-                  />
-
-                  <div
-                    className={
-                      styles.weekTaskContent
-                    }
-                  >
-                    <div
-                      className={
-                        styles.weekTaskTitle
-                      }
-                    >
-                      {event.task.title}
+                  {event.height < 30 ? (
+                    <div className="flex h-full w-full items-center justify-center overflow-visible text-[8px] font-bold leading-none tracking-wide text-white">
+                      <span className="truncate">
+                        {event.task.title}
+                      </span>
                     </div>
-
-                    <div
-                      className={
-                        styles.weekTaskTime
-                      }
-                    >
-                      {event.task.startTime} -{" "}
-                      {event.task.endTime}
+                  ) : event.height < 45 ? (
+                    <div className="flex h-full w-full items-center gap-1 overflow-hidden text-[9px] font-semibold leading-none tracking-wide text-white">
+                      <span className="min-w-0 flex-1 truncate">
+                        {event.task.title}
+                      </span>
+                      {/* <span className="shrink-0 whitespace-nowrap">
+                        {event.task.startTime} - {event.task.endTime}
+                      </span> */}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex h-full w-full flex-col justify-start overflow-hidden">
+                      <div className={styles.weekTaskTitle}>
+                        {event.task.title}
+                      </div>
+
+                      {event.height > 60 && event.task.description ? (
+                        <>
+                        <div className="mt-0.5 truncate text-[10px] font-medium text-slate-200">
+                          {event.task.description}
+                        </div>
+                        <div className={styles.weekTaskTime}>
+                          {event.task.startTime} - {event.task.endTime}
+                        </div>
+                        </>
+                      ) : (
+                        <div className={styles.weekTaskTime}>
+                          {event.task.startTime} - {event.task.endTime}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
