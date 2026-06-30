@@ -1,8 +1,8 @@
 // src/app/scheduler/components/TaskEvent.tsx
 "use client";
 
-import { CalendarEvent } from "../types/task";
-import { useScheduler } from "../provider";
+import { CalendarEvent } from "../../types/task";
+import { useScheduler } from "../../provider";
 
 interface TaskEventProps {
   event: CalendarEvent;

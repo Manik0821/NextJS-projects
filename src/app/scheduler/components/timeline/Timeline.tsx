@@ -1,15 +1,15 @@
 "use client";
 
-import { Task } from "../types/task";
+import { Task } from "../../types/task";
 
 import TimeColumn from "./TimeColumn";
 import TimelineGrid from "./TimelineGrid";
 import CurrentTimeIndicator from "./CurrentTimeIndicator";
 import TaskLayer from "./TaskLayer";
 
-import { buildCalendarEvents } from "../utils/taskLayout";
+import { buildCalendarEvents } from "../../utils/taskLayout";
 
-import { DAY_HEIGHT } from "../constants/scheduler";
+import { DAY_HEIGHT } from "../../constants/scheduler";
 
 interface TimelineProps {
   tasks: Task[];

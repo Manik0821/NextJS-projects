@@ -4,11 +4,11 @@
 import { useMemo, useState } from "react";
 
 import SchedulerHeader from "./SchedulerHeader";
-import AddTaskDialog from "./AddTaskDialog";
-import TaskDetailsDrawer from "./TaskDetailsDrawer";
-import DayView from "./DayView";
-import WeekView from "./WeekView";
-import MonthView from "./MonthView";
+import AddTaskDialog from "./task/AddTaskDialog";
+import TaskDetailsDrawer from "./task/TaskDetailsDrawer";
+import DayView from "./views/day/DayView";
+import WeekView from "./views/week/WeekView";
+import MonthView from "./views/month/MonthView";
 
 import { SchedulerProvider } from "../provider";
 import { useTasks } from "../hooks/useTasks";

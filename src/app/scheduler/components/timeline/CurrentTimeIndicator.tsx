@@ -1,7 +1,7 @@
 // src/app/scheduler/components/CurrentTimeIndicator.tsx
 "use client";
 
-import { useCurrentTime } from "../hooks/useCurrentTime";
+import { useCurrentTime } from "../../hooks/useCurrentTime";
 
 interface CurrentTimeIndicatorProps {
   selectedDate: Date;

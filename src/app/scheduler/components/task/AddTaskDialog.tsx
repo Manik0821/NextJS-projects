@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { TaskPriority, TaskStatus } from "../types/task";
-import { formatDate } from "../utils/date";
+import { TaskPriority, TaskStatus } from "../../types/task";
+import { formatDate } from "../../utils/date";
 
 type RepeatFrequency =
   | "none"

@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarEvent } from "../types/task";
+import { CalendarEvent } from "../../types/task";
 import TaskEvent from "./TaskEvent";
 
 export default function TaskLayer({

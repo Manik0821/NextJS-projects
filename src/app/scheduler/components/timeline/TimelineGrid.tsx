@@ -4,7 +4,7 @@
 import {
   HOUR_HEIGHT,
   HOURS_PER_DAY,
-} from "../constants/scheduler";
+} from "../../constants/scheduler";
 
 export default function TimelineGrid() {
   const totalCanvasHeight = HOURS_PER_DAY * HOUR_HEIGHT;

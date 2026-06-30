@@ -1,9 +1,9 @@
 // src/app/scheduler/components/MonthView.tsx
 "use client";
 
-import { useScheduler } from "../provider";
-import { Task } from "../types/task";
-import { formatKey, getMonthMatrix } from "../utils/month";
+import { useScheduler } from "../../../provider";
+import { Task } from "../../../types/task";
+import { formatKey, getMonthMatrix } from "../../../utils/month";
 
 function parseHour(timeStr: string): number {
   if (!timeStr) return 0;

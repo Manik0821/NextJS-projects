@@ -1,0 +1,215 @@
+.weekViewContainer {
+  display: flex;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.weekColumn {
+  min-width: 110px;
+  flex: 1;
+  background-color: #ffffff;
+  border-left: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.weekColumnFirst {
+  border-left: none;
+}
+
+.weekColumnSelected {
+  background-color: #f8fbff;
+}
+
+.weekStickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 0.75rem 0.5rem 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+}
+
+.weekDayLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.weekDayNumber {
+  margin-top: 0.125rem;
+  display: inline-flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.weekGridCanvas {
+  position: relative;
+  height: 2880px;
+  background-color: #ffffff;
+  user-select: none;
+}
+
+.weekHourSlot {
+  position: relative;
+  height: 120px;
+  border-bottom: 1px solid rgba(241, 245, 249, 0.9);
+}
+
+.weekHourLabel {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.weekTaskCard {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.5rem;
+  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.weekTaskCard:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.weekTaskCardTiny {
+  padding: 0;
+}
+
+.weekTaskCardCompact {
+  padding: 0.25rem 0.5rem;
+}
+
+.weekTaskCardStandard {
+  padding: 0.375rem 0.5rem;
+}
+
+.weekTaskTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.weekTaskTime {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.5625rem;
+  font-weight: 500;
+  margin-top: 0.125rem;
+  opacity: 0.85;
+  color: #ffffff;
+  font-family: monospace;
+}
+
+.weekTaskDescription {
+  margin-top: 0.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.weekTaskContentTiny {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding: 0 0.125rem;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+.weekTaskContentCompact {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  gap: 0.25rem;
+  overflow: hidden;
+  padding: 0 0.125rem;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+
+@media (max-width: 639px) {
+  .weekColumn {
+    min-width: 96px;
+  }
+
+  .weekStickyHeader {
+    padding: 0.4rem 0.3rem 0.35rem;
+  }
+
+  .weekDayLabel {
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
+  }
+
+  .weekDayNumber {
+    margin-top: 0.125rem;
+    height: 1.35rem;
+    width: 1.35rem;
+    font-size: 0.75rem;
+  }
+
+  .weekHourLabel {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .weekDayNumber {
+    margin-top: 0.25rem;
+    height: 2rem;
+    width: 2rem;
+    font-size: 1.125rem;
+  }
+
+  .weekHourLabel {
+    left: 0.5rem;
+    top: 0.5rem;
+    font-size: 0.625rem;
+  }
+
+  .weekTaskTitle {
+    font-size: 0.75rem;
+  }
+}

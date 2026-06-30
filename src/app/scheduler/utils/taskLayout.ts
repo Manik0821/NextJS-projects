@@ -3,7 +3,9 @@
 import { CalendarEvent, Task } from "../types/task";
 import { getStartMinutes, getEndMinutes } from "./time";
 
-const PIXELS_PER_MINUTE = 1;
+interface BuildCalendarEventsOptions {
+  pixelsPerMinute?: number;
+}
 
 function overlaps(a: Task, b: Task) {
   return (
@@ -13,8 +15,10 @@ function overlaps(a: Task, b: Task) {
 }
 
 export function buildCalendarEvents(
-  tasks: Task[]
+  tasks: Task[],
+  options: BuildCalendarEventsOptions = {}
 ): CalendarEvent[] {
+  const pixelsPerMinute = options.pixelsPerMinute ?? 1;
   const sorted = [...tasks].sort((a, b) => {
     const diff =
       getStartMinutes(a) -
@@ -58,10 +62,9 @@ export function buildCalendarEvents(
     events.push({
       task,
 
-      // Match the day-view time scale so event height fills the slot correctly
-      top: start * PIXELS_PER_MINUTE,
+      top: start * pixelsPerMinute,
       height: Math.max(
-        (end - start) * PIXELS_PER_MINUTE,
+        (end - start) * pixelsPerMinute,
         10
       ),
 
