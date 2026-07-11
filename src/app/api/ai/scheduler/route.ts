@@ -1,39 +1,38 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 
-import { langfuse } from "../ai-transcript/langfuse";
-import { getCachedPrompt } from "../ai-transcript/prompts";
-import { MODELS } from "@/models/models";
+import { formatDate } from "./helper";
+import { runSchedulerRequest } from "./scheduler.service";
+
 import {
-  executeSchedulerAction,
-  formatDate,
-  getSchedulerIntent,
-  normalizeLookupFields,
-  normalizeParsedDates,
-} from "./helper";
-import type { SchedulerAIRequest, SchedulerIntentResult } from "./types";
+  createSchedulerTrace,
+  safeFlushLangfuse,
+  updateTrace,
+} from "./observability";
 
-const openai = new OpenAI({
-  apiKey: process.env.NVIDIA_API_KEY1,
-  baseURL: process.env.NVIDIA_BASE_URL,
-});
+import type {
+  SchedulerAIRequest,
+} from "./types";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  "http://localhost:3000";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const trace = langfuse.trace({
-    name: "ai-scheduler-endpoint",
-    metadata: {
-      model: MODELS.LLAMA_70B,
-      environment: process.env.NODE_ENV,
-    },
+  const requestId = crypto.randomUUID();
+  const startedAt = Date.now();
+
+  console.log(
+    `[AI Scheduler][${requestId}] POST request started`
+  );
+
+  const trace = createSchedulerTrace({
+    requestId,
   });
 
   try {
-    const body =
-      (await request.json()) as SchedulerAIRequest;
+    const body = await parseRequestBody(
+      request,
+      requestId
+    );
 
     const selectedDate =
       body.context?.selectedDate ??
@@ -43,86 +42,71 @@ export async function POST(request: Request) {
       body.context?.currentDate ??
       formatDate(new Date());
 
-    if (
-      !body.message ||
-      typeof body.message !== "string"
-    ) {
-      trace.update({
-        output: {
-          error: "Missing message",
-        },
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Message is required.",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
-
-    trace.update({
-      input: {
+    console.log(
+      `[AI Scheduler][${requestId}] Request input:`,
+      {
         message: body.message,
         selectedDate,
         currentDate,
-      },
-    });
-
-    let parsed: SchedulerIntentResult = await getSchedulerIntent(
-      body.message,
-      selectedDate,
-      currentDate,
-      trace,
-      openai,
-      async (promptId: string) => getCachedPrompt(promptId)
+        confirm: body.confirm ?? false,
+      }
     );
 
-    parsed = normalizeParsedDates(
-      parsed,
-      body.message,
-      selectedDate,
-      currentDate
-    );
+    const validationResponse =
+      validateMessage(
+        body,
+        requestId
+      );
 
-    parsed = normalizeLookupFields(parsed, selectedDate);
+    if (validationResponse) {
+      updateTrace(
+        trace,
+        {
+          output: {
+            error: "Missing message",
+          },
+        },
+        requestId
+      );
 
-    if (body.confirm) {
-      parsed.confirm = true;
+      return validationResponse;
     }
 
-    const actionGeneration =
-      trace.generation({
-        name: "scheduler-action-execution",
-        model: "internal-api",
-        input: parsed,
-      });
-
-    const result = await executeSchedulerAction(
-      parsed,
-      selectedDate,
-      BASE_URL
+    updateTrace(
+      trace,
+      {
+        input: {
+          message: body.message,
+          selectedDate,
+          currentDate,
+        },
+      },
+      requestId
     );
 
-    actionGeneration.end({
-      output: result,
-    });
+    const { parsed, result } =
+      await runSchedulerRequest({
+        body,
+        selectedDate,
+        currentDate,
+        requestId,
+        trace,
+      });
 
-    trace.update({
-      output: {
-        parsed,
-        result,
-      },
-    });
+    await safeFlushLangfuse(
+      requestId
+    );
 
-    await langfuse.flushAsync();
+    console.log(
+      `[AI Scheduler][${requestId}] Request completed in ${
+        Date.now() - startedAt
+      }ms`
+    );
 
     return NextResponse.json(
       {
         success: true,
+        requestId,
         parsed,
         result,
       },
@@ -130,30 +114,149 @@ export async function POST(request: Request) {
         status: 200,
       }
     );
-  } catch (error: any) {
-    console.error(
-      "POST /api/ai/scheduler error:",
-      error
-    );
-
-    trace.update({
-      output: {
-        errorMessage: error.message,
-      },
+  } catch (error: unknown) {
+    return handleSchedulerError({
+      error,
+      trace,
+      requestId,
+      startedAt,
     });
+  }
+}
 
-    await langfuse.flushAsync();
-
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          "AI scheduler action failed.",
-        details: error.message,
-      },
-      {
-        status: 500,
-      }
+async function parseRequestBody(
+  request: Request,
+  requestId: string
+): Promise<SchedulerAIRequest> {
+  try {
+    return (
+      (await request.json()) as SchedulerAIRequest
     );
+  } catch {
+    console.error(
+      `[AI Scheduler][${requestId}] Invalid JSON request body`
+    );
+
+    throw new SchedulerRequestError(
+      "Invalid JSON request body.",
+      400
+    );
+  }
+}
+
+function validateMessage(
+  body: SchedulerAIRequest,
+  requestId: string
+) {
+  if (
+    typeof body.message === "string" &&
+    body.message.trim()
+  ) {
+    return null;
+  }
+
+  console.error(
+    `[AI Scheduler][${requestId}] Message is missing`
+  );
+
+  return NextResponse.json(
+    {
+      success: false,
+      requestId,
+      message: "Message is required.",
+    },
+    {
+      status: 400,
+    }
+  );
+}
+
+interface HandleErrorOptions {
+  error: unknown;
+  trace: any;
+  requestId: string;
+  startedAt: number;
+}
+
+async function handleSchedulerError({
+  error,
+  trace,
+  requestId,
+  startedAt,
+}: HandleErrorOptions) {
+  const message =
+    error instanceof Error
+      ? error.message
+      : "Unknown scheduler error.";
+
+  const status =
+    error instanceof SchedulerRequestError
+      ? error.status
+      : isTimeoutError(message)
+        ? 504
+        : 500;
+
+  console.error(
+    `[AI Scheduler][${requestId}] Request failed after ${
+      Date.now() - startedAt
+    }ms`
+  );
+
+  console.error(error);
+
+  updateTrace(
+    trace,
+    {
+      output: {
+        errorMessage: message,
+      },
+    },
+    requestId
+  );
+
+  await safeFlushLangfuse(
+    requestId
+  );
+
+  return NextResponse.json(
+    {
+      success: false,
+      requestId,
+      message:
+        status === 504
+          ? "The AI provider took too long to respond."
+          : status === 400
+            ? message
+            : "AI scheduler action failed.",
+      details:
+        status === 400
+          ? undefined
+          : message,
+    },
+    {
+      status,
+    }
+  );
+}
+
+function isTimeoutError(
+  message: string
+) {
+  const normalized =
+    message.toLowerCase();
+
+  return (
+    normalized.includes("timeout") ||
+    normalized.includes("timed out")
+  );
+}
+
+class SchedulerRequestError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+    this.name = "SchedulerRequestError";
   }
 }

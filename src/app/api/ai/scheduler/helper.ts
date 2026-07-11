@@ -89,29 +89,110 @@ export function normalizeParsedDates(
   selectedDate: string,
   currentDate: string
 ) {
-  const hasExplicitDate = userMentionedExplicitDate(message);
+  const hasExplicitDate =
+    userMentionedExplicitDate(message);
 
-  if (parsed.intent === "create" && parsed.task) {
-    if (!parsed.task.date || !hasExplicitDate || parsed.task.date < currentDate) {
-      parsed.task.date = selectedDate;
+  const normalizedMessage =
+    message.toLowerCase();
+
+  if (
+    parsed.intent === "create" &&
+    parsed.task
+  ) {
+    if (
+      !parsed.task.date ||
+      !hasExplicitDate ||
+      parsed.task.date < currentDate
+    ) {
+      parsed.task.date =
+        selectedDate;
     }
 
     if (parsed.task.repeat?.enabled) {
-      if (!parsed.task.repeat.until || parsed.task.repeat.until < parsed.task.date) {
-        parsed.task.repeat.until = addDays(parsed.task.date, 7);
+      /*
+       * "Until next month" is an end date,
+       * not a monthly frequency.
+       */
+      if (
+        normalizedMessage.includes(
+          "until next month"
+        )
+      ) {
+        parsed.task.repeat.until =
+          addMonths(
+            parsed.task.date,
+            1
+          );
+
+        const hasExplicitFrequency =
+          /\b(daily|every day|weekly|every week|monthly|every month|yearly|every year)\b/i.test(
+            message
+          );
+
+        if (!hasExplicitFrequency) {
+          parsed.task.repeat.frequency =
+            "daily";
+
+          parsed.task.repeat.interval =
+            1;
+        }
+      } else if (
+        normalizedMessage.includes(
+          "until next week"
+        )
+      ) {
+        parsed.task.repeat.until =
+          addDays(
+            parsed.task.date,
+            7
+          );
+      } else if (
+        normalizedMessage.includes(
+          "until next year"
+        )
+      ) {
+        parsed.task.repeat.until =
+          addYears(
+            parsed.task.date,
+            1
+          );
+      } else if (
+        !parsed.task.repeat.until ||
+        parsed.task.repeat.until <
+        parsed.task.date
+      ) {
+        parsed.task.repeat.until =
+          addDays(
+            parsed.task.date,
+            7
+          );
       }
     }
   }
 
-  if (parsed.intent === "query") {
-    if (!parsed.startDate || !parsed.endDate || !hasExplicitDate) {
-      parsed.startDate = selectedDate;
-      parsed.endDate = selectedDate;
+  if (
+    parsed.intent === "query"
+  ) {
+    if (
+      !parsed.startDate ||
+      !parsed.endDate ||
+      !hasExplicitDate
+    ) {
+      parsed.startDate =
+        selectedDate;
+
+      parsed.endDate =
+        selectedDate;
     }
   }
 
-  if (parsed.intent === "delete_occurrence" && !parsed.occurrenceDate) {
-    parsed.occurrenceDate = selectedDate;
+  if (
+    parsed.intent ===
+    "delete_occurrence" &&
+    !parsed.occurrenceDate
+  ) {
+    parsed.occurrenceDate =
+      selectedDate;
   }
 
   return parsed;
@@ -299,54 +380,209 @@ export async function getSchedulerIntent(
   selectedDate: string,
   currentDate: string,
   trace: any,
-  openaiClient: Pick<OpenAI, "chat" | "responses" | "models"> | any,
+  openaiClient: any,
   promptLoader: (promptId: string) => Promise<any>
 ): Promise<SchedulerIntentResult> {
-  const prompt = await promptLoader("Next-JS/Scheduler/scheduler_intent_extractor");
+  console.log("[Scheduler Intent] Loading prompt...");
+
+  const prompt = await promptLoader(
+    "Next-JS/Scheduler/scheduler_intent_extractor"
+  );
 
   const compiledPrompt = prompt.compile({
     selectedDate,
     currentDate,
   });
 
-  const generation = trace.generation({
-    name: "scheduler-intent-extraction",
-    model: MODELS.LLAMA_70B,
-    input: {
+  console.log("[Scheduler Intent] Prompt loaded");
+  console.log("[Scheduler Intent] Calling NVIDIA model...");
+
+  let generation: any = null;
+
+  try {
+    generation = trace?.generation({
+      name: "scheduler-intent-extraction",
+      model: "meta/llama-3.1-8b-instruct",
+      input: {
+        userMessage,
+        selectedDate,
+        currentDate,
+      },
+      prompt,
+    });
+  } catch (error) {
+    console.warn(
+      "[Scheduler Intent] Langfuse generation failed:",
+      error
+    );
+  }
+
+  try {
+    const completion =
+      await openaiClient.chat.completions.create(
+        {
+          model: "meta/llama-3.1-8b-instruct",
+          temperature: 0,
+          max_tokens: 350,
+          messages: [
+            {
+              role: "system",
+              content: compiledPrompt,
+            },
+            {
+              role: "user",
+              content: userMessage,
+            },
+          ],
+        },
+        {
+          timeout: 20_000,
+          maxRetries: 0,
+        }
+      );
+
+    const raw =
+      completion.choices?.[0]?.message?.content ?? "";
+
+    console.log("[Scheduler Intent] NVIDIA response:");
+    console.log(raw);
+
+    const parsed =
+      safeJsonParse<SchedulerIntentResult>(raw);
+
+    if (!parsed) {
+      console.error(
+        "[Scheduler Intent] Invalid JSON returned by NVIDIA"
+      );
+
+      return {
+        intent: "unknown",
+      };
+    }
+
+    try {
+      generation?.end({
+        output: parsed,
+        usage: {
+          promptTokens:
+            completion.usage?.prompt_tokens,
+          completionTokens:
+            completion.usage?.completion_tokens,
+          totalTokens:
+            completion.usage?.total_tokens,
+        },
+      });
+    } catch (error) {
+      console.warn(
+        "[Scheduler Intent] Langfuse generation end failed:",
+        error
+      );
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error(
+      "[Scheduler Intent] NVIDIA request failed:",
+      error
+    );
+
+    const fallback = getFallbackSchedulerIntent(
       userMessage,
-      selectedDate,
-      currentDate,
-    },
-    prompt,
-  });
+      selectedDate
+    );
 
-  const completion = await openaiClient.chat.completions.create({
-    model: "meta/llama-3.3-70b-instruct",
-    temperature: 0,
-    max_tokens: 700,
-    messages: [
-      {
-        role: "system",
-        content: compiledPrompt,
+    console.log(
+      "[Scheduler Intent] Using fallback parser:",
+      fallback
+    );
+
+    return fallback;
+  }
+}
+
+function getFallbackSchedulerIntent(
+  message: string,
+  selectedDate: string
+): SchedulerIntentResult {
+  const text = message.toLowerCase().trim();
+
+  const isDeleteSeries =
+    text.includes("delete all") ||
+    text.includes("all occurrences") ||
+    text.includes("every occurrence") ||
+    text.includes("whole series") ||
+    text.includes("delete series") ||
+    text.includes("remove recurring task");
+
+  if (isDeleteSeries) {
+    const timeMatch = message.match(
+      /from\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s+to\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i
+    );
+
+    const titleMatch = message.match(
+      /(?:task\s+(?:name\s+)?)?(.+?)\s+from\s+\d/i
+    );
+
+    const startTime = convertTo24Hour(
+      timeMatch?.[1],
+      timeMatch?.[2],
+      timeMatch?.[3] ?? timeMatch?.[6]
+    );
+
+    const endTime = convertTo24Hour(
+      timeMatch?.[4],
+      timeMatch?.[5],
+      timeMatch?.[6] ?? timeMatch?.[3]
+    );
+
+    const title = titleMatch?.[1]
+      ?.replace(/^delete\s+/i, "")
+      .replace(/^the\s+/i, "")
+      .replace(/^task\s+(?:name\s+)?/i, "")
+      .trim();
+
+    return {
+      intent: "delete_series",
+      taskId: "",
+      lookup: {
+        title,
+        date: selectedDate,
+        startTime,
+        endTime,
       },
-      {
-        role: "user",
-        content: userMessage,
-      },
-    ],
-  });
+      confirm: false,
+    };
+  }
 
-  const raw = completion.choices[0].message?.content ?? "";
+  return {
+    intent: "unknown",
+  };
+}
 
-  generation.end({
-    output: raw,
-    usage: {
-      promptTokens: completion.usage?.prompt_tokens,
-      completionTokens: completion.usage?.completion_tokens,
-    },
-  });
+function convertTo24Hour(
+  hourValue?: string,
+  minuteValue?: string,
+  periodValue?: string
+) {
+  if (!hourValue) {
+    return undefined;
+  }
 
-  return safeJsonParse<SchedulerIntentResult>(raw) ?? { intent: "unknown" };
+  let hour = Number(hourValue);
+  const minute = Number(minuteValue ?? "0");
+  const period = periodValue?.toLowerCase();
+
+  if (period === "pm" && hour < 12) {
+    hour += 12;
+  }
+
+  if (period === "am" && hour === 12) {
+    hour = 0;
+  }
+
+  return `${String(hour).padStart(2, "0")}:${String(
+    minute
+  ).padStart(2, "0")}`;
 }
 
 export async function executeSchedulerAction(
@@ -419,46 +655,46 @@ export async function executeSchedulerAction(
   }
 
   if (parsed.intent === "update") {
-  let taskId = normalizeTaskId(parsed.taskId);
+    let taskId = normalizeTaskId(parsed.taskId);
 
-  if (!taskId && parsed.lookup) {
-    const lookupResult =
-      await findTaskIdFromLookup(
-        parsed.lookup,
-        parsed.lookup.date ?? selectedDate,
-        baseUrl,
-        fetchImpl
-      );
+    if (!taskId && parsed.lookup) {
+      const lookupResult =
+        await findTaskIdFromLookup(
+          parsed.lookup,
+          parsed.lookup.date ?? selectedDate,
+          baseUrl,
+          fetchImpl
+        );
 
-    if (!lookupResult.success) {
-      return lookupResult;
+      if (!lookupResult.success) {
+        return lookupResult;
+      }
+
+      taskId = lookupResult.taskId;
     }
 
-    taskId = lookupResult.taskId;
-  }
-
-  if (!taskId || !parsed.task) {
-    return {
-      success: false,
-      message:
-        "Update requires taskId/lookup and task payload.",
-      parsed,
-    };
-  }
-
-  const res = await fetch(
-    `${baseUrl}/api/tasks/${taskId}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(parsed.task),
+    if (!taskId || !parsed.task) {
+      return {
+        success: false,
+        message:
+          "Update requires taskId/lookup and task payload.",
+        parsed,
+      };
     }
-  );
 
-  return res.json();
-}
+    const res = await fetch(
+      `${baseUrl}/api/tasks/${taskId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(parsed.task),
+      }
+    );
+
+    return res.json();
+  }
 
   if (parsed.intent === "delete_occurrence") {
     let taskId = normalizeTaskId(parsed.taskId);
@@ -546,4 +782,40 @@ export async function executeSchedulerAction(
     success: false,
     message: "I could not understand the scheduler action.",
   };
+}
+
+function addMonths(dateKey: string, months: number) {
+  const [year, month, day] = dateKey
+    .split("-")
+    .map(Number);
+
+  const date = new Date(
+    year,
+    month - 1,
+    day
+  );
+
+  date.setMonth(
+    date.getMonth() + months
+  );
+
+  return formatDate(date);
+}
+
+function addYears(dateKey: string, years: number) {
+  const [year, month, day] = dateKey
+    .split("-")
+    .map(Number);
+
+  const date = new Date(
+    year,
+    month - 1,
+    day
+  );
+
+  date.setFullYear(
+    date.getFullYear() + years
+  );
+
+  return formatDate(date);
 }
