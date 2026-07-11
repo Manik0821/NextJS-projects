@@ -11,13 +11,14 @@ const getFeatureTag = (path: string): string => {
   if (path.includes('poll')) return 'Social';
   if (path.includes('ai')) return 'AI Assistant';
   if (path.includes('carousel')) return 'UI Component';
-  if (path.includes('schedler')) return 'Task Scheduler';
+  if (path.includes('scheduler')) return 'Task Scheduler'; // Fixed spelling from 'schedler'
   return 'App';
 };
 
 export default function FeatureContainer() {
-  // Count only the active visible applications
-  const appCount = features.filter((f) => f.path !== '/' && f.display).length;
+  // Pre-filter the features array once to save computation cycles
+  const activeFeatures = features.filter((f) => f.path !== '/' && f.display);
+  const appCount = activeFeatures.length;
 
   return (
     <>
@@ -39,35 +40,34 @@ export default function FeatureContainer() {
 
         {/* The Layout Grid Workspace */}
         <div className="feature-grid">
-          {features
-            .filter((feature) => feature.path !== '/' && feature.display) // Combined display filter
-            .map((app, index) => {
-              const tag = getFeatureTag(app.path);
-              
-              return (
-                <Link key={index} href={app.path} className="card-wrapper">
-                  <div className="card-inner-stretch">
-                    <Card title={app.title}>
-                      <div className="card-content-layout">
-                        <div className="card-tag-wrapper">
-                          <span className={`card-badge badge-${tag.toLowerCase().replace(' ', '-')}`}>
-                            {tag}
-                          </span>
-                        </div>
-
-                        <p className="card-description">
-                          {app.description}
-                        </p>
-                        
-                        <span className="card-action-link">
-                          Open App →
+          {activeFeatures.map((app) => {
+            const tag = getFeatureTag(app.path);
+            
+            return (
+              /* Replaced index key with stable, unique app.path for ideal React rendering */
+              <Link key={app.path} href={app.path} className="card-wrapper">
+                <div className="card-inner-stretch">
+                  <Card title={app.title}>
+                    <div className="card-content-layout">
+                      <div className="card-tag-wrapper">
+                        <span className={`card-badge badge-${tag.toLowerCase().replace(' ', '-')}`}>
+                          {tag}
                         </span>
                       </div>
-                    </Card>
-                  </div>
-                </Link>
-              );
-            })}
+
+                      <p className="card-description">
+                        {app.description}
+                      </p>
+                      
+                      <span className="card-action-link">
+                        Open App →
+                      </span>
+                    </div>
+                  </Card>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </>

@@ -43,15 +43,15 @@ export const features: AppItem[] = [
     display: true /* Turn to false to instantly hide this specific card */
   },
   { 
-    title: "Carousel", 
+    title: "🎠 Carousel", 
     path: "/carousel", 
-    description: "Try out the avaialable carousels", 
+    description: "Try out the available image and content carousels.", 
     display: false /* Turn to false to instantly hide this specific card */
   },
   { 
-    title: "Scheduler", 
+    title: "📅 Scheduler", 
     path: "/scheduler", 
-    description: "Schedule your tasks", 
+    description: "Plan your timeline, organize tasks, and manage upcoming events.", 
     display: true /* Turn to false to instantly hide this specific card */
   },
 ];
