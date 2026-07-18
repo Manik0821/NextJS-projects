@@ -4,15 +4,17 @@ import { Card } from '@/lib/card/card';
 import './feature-container.css'; 
 import { features } from '@/app/features/feature-list'; // Adjust path if needed
 
-const getFeatureTag = (path: string): string => {
+const getFeatureTag = (path: string ): string => {
   if (path.includes('weather')) return 'Utility';
   if (path.includes('movie')) return 'Entertainment';
   if (path.includes('game')) return 'Interactive';
   if (path.includes('poll')) return 'Social';
   if (path.includes('ai')) return 'AI Assistant';
   if (path.includes('carousel')) return 'UI Component';
-  if (path.includes('scheduler')) return 'Task Scheduler'; // Fixed spelling from 'schedler'
-  return 'App';
+  if (path.includes('scheduler')) return 'Task Scheduler';
+
+  
+  return 'External App';
 };
 
 export default function FeatureContainer() {

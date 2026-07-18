@@ -176,7 +176,7 @@
 .card-badge.badge-ai-assistant { background-color: #f5f3ff; color: #5b21b6; }
 .card-badge.badge-ui-component { background-color: #f0fdfa; color: #0f766e; } /* Added Turquoise for Carousels */
 .card-badge.badge-task-scheduler { background-color: #fff7ed; color: #c2410c; } /* Added Amber for Scheduler */
-.card-badge.badge-app { background-color: #f1f5f9; color: #334155; }
+.card-badge.badge-external-app { background-color: #f1f5f9; color: #334155; }
 
 .card-description {
   margin: 0 0 1rem 0; /* Reduced margins to minimize wasted dead-space */
